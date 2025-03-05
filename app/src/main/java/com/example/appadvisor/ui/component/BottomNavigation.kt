@@ -1,5 +1,6 @@
 package com.example.appadvisor.ui.component
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -67,7 +68,13 @@ fun BottomNavBar(
                 } else {
                     val isSelected = currentRoute == item.route
                     NavigationBarItem(
-                        icon = { Icon(item.icon!!, contentDescription = item.label) },
+                        icon = {
+                            Crossfade(targetState = isSelected) { selected ->
+                                val iconColor = if (selected) Color(0xFF8E44AD) else Color.Gray
+                                Icon(item.icon!!, contentDescription = item.label, tint = iconColor)
+                            }
+
+                        },
                         label = { Text(item.label) },
                         selected = isSelected,
                         onClick = {
