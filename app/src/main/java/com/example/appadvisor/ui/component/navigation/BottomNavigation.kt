@@ -1,4 +1,4 @@
-package com.example.appadvisor.ui.component
+package com.example.appadvisor.ui.component.navigation
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box

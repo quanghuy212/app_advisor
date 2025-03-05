@@ -145,6 +145,6 @@ data class Student(
 @Composable
 fun PreviewInfo() {
     AppAdvisorTheme {
-        StudentInfoScreen()
+        InfoScreen()
     }
 }

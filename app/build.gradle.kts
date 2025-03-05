@@ -68,4 +68,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.material)
+    implementation("com.kizitonwose.calendar:compose:2.0.4")
 }
