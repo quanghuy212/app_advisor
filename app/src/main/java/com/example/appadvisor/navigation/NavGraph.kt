@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.appadvisor.ui.screen.calendar.CalendarTodoScreen
-import com.example.appadvisor.ui.screen.barcode.BarcodeGenerationScreen
+import com.example.appadvisor.ui.screen.barcode.BarcodeGeneratorScreen
 import com.example.appadvisor.ui.screen.chat.ChatScreen
 import com.example.appadvisor.ui.screen.info.InfoScreen
 import com.example.appadvisor.ui.screen.OnlineForm
@@ -37,7 +37,7 @@ fun AppNavGraph(navController: NavHostController,isLoggedIn: Boolean?) {
         composable("search") { SearchingScreen() }
         composable("chat") { ChatScreen() }
         composable("info") { InfoScreen() }
-        composable("barcode") { BarcodeGenerationScreen() }
+        composable("barcode") { BarcodeGeneratorScreen(navController = navController) }
 
         // Home screen
         composable("calendar") { CalendarTodoScreen() }

@@ -69,4 +69,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.material)
     implementation("com.kizitonwose.calendar:compose:2.0.4")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
