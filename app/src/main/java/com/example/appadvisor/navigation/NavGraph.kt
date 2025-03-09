@@ -6,10 +6,10 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.appadvisor.ui.component.calendar.CalendarTodoScreen
-import com.example.appadvisor.ui.screen.BarcodeGenerationScreen
-import com.example.appadvisor.ui.screen.ChatScreen
-import com.example.appadvisor.ui.screen.InfoScreen
+import com.example.appadvisor.ui.screen.calendar.CalendarTodoScreen
+import com.example.appadvisor.ui.screen.barcode.BarcodeGenerationScreen
+import com.example.appadvisor.ui.screen.chat.ChatScreen
+import com.example.appadvisor.ui.screen.info.InfoScreen
 import com.example.appadvisor.ui.screen.OnlineForm
 import com.example.appadvisor.ui.screen.ResultScreen
 import com.example.appadvisor.ui.screen.SearchingScreen

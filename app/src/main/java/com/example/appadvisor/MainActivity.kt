@@ -21,7 +21,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.navigation.AppNavGraph
 import com.example.appadvisor.navigation.AppScreens
-import com.example.appadvisor.ui.component.navigation.BottomNavBar
+import com.example.appadvisor.ui.screen.navigation.BottomNavBar
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 class MainActivity : ComponentActivity() {

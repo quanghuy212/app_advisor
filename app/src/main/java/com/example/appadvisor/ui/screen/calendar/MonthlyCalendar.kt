@@ -1,4 +1,4 @@
-package com.example.appadvisor.ui.component.calendar
+package com.example.appadvisor.ui.screen.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

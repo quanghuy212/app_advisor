@@ -1,4 +1,4 @@
-package com.example.appadvisor.ui.screen
+package com.example.appadvisor.ui.screen.info
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

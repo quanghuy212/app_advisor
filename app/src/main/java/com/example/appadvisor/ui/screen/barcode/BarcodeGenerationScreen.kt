@@ -1,4 +1,4 @@
-package com.example.appadvisor.ui.screen
+package com.example.appadvisor.ui.screen.barcode
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
