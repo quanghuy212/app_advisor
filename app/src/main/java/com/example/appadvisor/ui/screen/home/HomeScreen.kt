@@ -1,3 +1,6 @@
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
+import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarTodoView
 
 
 data class DemoCard(
@@ -33,7 +37,7 @@ data class DemoCard(
 fun HomeScreen(
      navController: NavController
 ) {
-    val isCalendarShown by remember {
+    var isCalendarShown by remember {
         mutableStateOf(false)
     }
     var isLightTheme by remember {
@@ -106,14 +110,16 @@ fun HomeScreen(
             }
         }
         // Box calendar
+        Icon(
+            painter = painterResource(id = if (isCalendarShown) R.drawable.baseline_calendar_month_24 else R.drawable.un_calendar_month),
+            contentDescription = null,
+            modifier = Modifier.fillMaxWidth()
+                .clickable { isCalendarShown = !isCalendarShown }
+        )
 
-            Icon(
-                painter = painterResource(id =
-                    if (isCalendarShown) R.drawable.baseline_calendar_month_24 else R.drawable.un_calendar_month
-                ),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth()
-            )
+        AnimatedVisibility(visible = isCalendarShown, enter = fadeIn(), exit = fadeOut()) {
+            WeeklyCalendarTodoView()
+        }
 
         // Main content
         Box(

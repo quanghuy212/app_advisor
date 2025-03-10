@@ -41,7 +41,8 @@ fun CalendarTodoScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF0F4F8))
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         // Calendar Section
         CalendarSection(

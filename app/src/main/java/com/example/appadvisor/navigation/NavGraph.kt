@@ -11,9 +11,9 @@ import com.example.appadvisor.ui.screen.barcode.BarcodeGeneratorScreen
 import com.example.appadvisor.ui.screen.chat.ChatScreen
 import com.example.appadvisor.ui.screen.info.InfoScreen
 import com.example.appadvisor.ui.screen.OnlineForm
-import com.example.appadvisor.ui.screen.ResultScreen
 import com.example.appadvisor.ui.screen.SearchingScreen
 import com.example.appadvisor.ui.screen.SettingScreen
+import com.example.appadvisor.ui.screen.transcripts.StudentGradeScreen
 import com.example.kmadvisor.ui.screen.LoginScreen
 import com.example.kmadvisor.ui.screen.SignUpScreen
 
@@ -42,7 +42,7 @@ fun AppNavGraph(navController: NavHostController,isLoggedIn: Boolean?) {
         // Home screen
         composable("calendar") { CalendarTodoScreen() }
         composable("form") { OnlineForm() }
-        composable("results") { ResultScreen() }
+        composable("results") { StudentGradeScreen(gpa = 3.15f) }
         composable("settings") { SettingScreen() }
     }
 }
