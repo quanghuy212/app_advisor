@@ -9,7 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import com.example.appadvisor.R
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,27 +75,27 @@ fun InfoScreen() {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     InfoRow(
-                        icon = Icons.Default.Person,
+                        iconId = R.drawable.calendar,
                         label = "Ngày sinh",
                         value = student.birthday
                     )
                     InfoRow(
-                        icon = Icons.Default.Phone,
+                        iconId = R.drawable.baseline_call_24,
                         label = "Số điện thoại",
                         value = student.phone
                     )
                     InfoRow(
-                        icon = Icons.Default.Star,
+                        iconId = R.drawable.baseline_star_24,
                         label = "Chuyên ngành",
                         value = student.major
                     )
                     InfoRow(
-                        icon = Icons.Default.Lock,
-                        label = "Khóa",
+                        iconId = R.drawable.desktop_computer,
+                        label = "Lớp",
                         value = student.batch
                     )
                     InfoRow(
-                        icon = Icons.Default.Email,
+                        iconId = R.drawable.baseline_email_24,
                         label = "Email",
                         value = student.email
                     )
@@ -102,9 +105,10 @@ fun InfoScreen() {
     }
 }
 
+
 @Composable
 private fun InfoRow(
-    icon: ImageVector,
+    iconId: Int,
     label: String,
     value: String
 ) {
@@ -114,7 +118,7 @@ private fun InfoRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(iconId),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary
         )

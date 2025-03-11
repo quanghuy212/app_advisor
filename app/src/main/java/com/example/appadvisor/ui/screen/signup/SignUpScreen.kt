@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -51,7 +52,7 @@ fun SignUpScreen(
     modifier: Modifier = Modifier
 ) {
     // Var username control username field
-    var username by remember {
+    var email by remember {
         mutableStateOf("")
     }
 
@@ -61,6 +62,10 @@ fun SignUpScreen(
     }
 
     var phoneNumber by remember {
+        mutableStateOf("")
+    }
+
+    var userName by remember {
         mutableStateOf("")
     }
 
@@ -127,12 +132,13 @@ fun SignUpScreen(
             )
 
             OutlinedTextField(
-                value = username,
+                value = email,
                 onValueChange = {
-                    username = it
+                    email = it
+                    userName = it.substringBefore(delimiter = "@")
                 },
                 label = {
-                    Text(text = "Username")
+                    Text(text = "Email")
                 },
                 singleLine = true,
                 leadingIcon = {
@@ -142,7 +148,7 @@ fun SignUpScreen(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { username = "" }) {
+                    IconButton(onClick = { email = "" }) {
                         Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     }
                 },
@@ -152,6 +158,41 @@ fun SignUpScreen(
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            OutlinedTextField(
+                value = userName,
+                onValueChange = {
+                    userName = it
+                },
+                label = {
+                    Text(text = "Username")
+                },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null
+                    )
+                },
+                trailingIcon = {
+                    IconButton(
+                        onClick = { userName = "" }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = null
+                        )
+                    }
+                },
+                modifier = modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
                 )
             )

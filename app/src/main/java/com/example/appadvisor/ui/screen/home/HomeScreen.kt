@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -22,14 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
+import com.example.appadvisor.data.FeatureCard
+import com.example.appadvisor.data.featureCards
 import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarTodoView
 
 
-data class DemoCard(
-    val title: String,
-    val icon: Painter,
-    val description: String
-)
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,28 +40,14 @@ fun HomeScreen(
     var isLightTheme by remember {
         mutableStateOf(true)
     }
-    val demoCards = listOf(
-        DemoCard(
-            "Calendar",
-            painterResource(id = R.drawable.baseline_calendar_month_24),
-            "Schedule your day"
-        ),
-        DemoCard(
-            "Form",
-            painterResource(id = R.drawable.description),
-            "Manage your tasks"
-        ),
-        DemoCard(
-            "Results",
-            painterResource(id = R.drawable.target_8992467),
-            "Write your thoughts"
-        ),
-        DemoCard(
-            "Settings",
-            painterResource(id = R.drawable.settings_24px),
-            "Customize app"
+
+    val featureCards = featureCards.map { card ->
+        FeatureCard(
+            title = card.title,
+            iconId = card.iconId,
+            description = card.description
         )
-    )
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -110,12 +93,28 @@ fun HomeScreen(
             }
         }
         // Box calendar
-        Icon(
-            painter = painterResource(id = if (isCalendarShown) R.drawable.baseline_calendar_month_24 else R.drawable.un_calendar_month),
-            contentDescription = null,
-            modifier = Modifier.fillMaxWidth()
-                .clickable { isCalendarShown = !isCalendarShown }
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f)) // Đẩy IconButton sang phải
+
+            IconButton(
+                onClick = {
+                    isCalendarShown = !isCalendarShown
+                },
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = if (isCalendarShown) R.drawable.calendar else R.drawable.un_calendar),
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
+
 
         AnimatedVisibility(visible = isCalendarShown, enter = fadeIn(), exit = fadeOut()) {
             WeeklyCalendarTodoView()
@@ -132,7 +131,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(demoCards) { card ->
+                items(featureCards) { card ->
                     Card(
                         modifier = Modifier
                             .aspectRatio(1.3f)
@@ -156,7 +155,7 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                painter = card.icon,
+                                painter = painterResource(id = card.iconId) ,
                                 contentDescription = card.title,
                                 modifier = Modifier.size(36.dp),
                                 tint = MaterialTheme.colorScheme.primary

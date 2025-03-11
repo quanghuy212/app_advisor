@@ -26,7 +26,7 @@ fun GPAProgressBar(
     gpaValue: Float,
     maxGPA: Float = 4.0f,
     canvasSize: Dp = 200.dp,
-    strokeWidth: Float = 50f
+    strokeWidth: Float = 75f
 ) {
     val percentage = (gpaValue / maxGPA) * 100
     val sweepAngle by animateFloatAsState(
@@ -80,14 +80,14 @@ fun GPAProgressBar(
     ) {
         Text(
             text = "GPA",
-            fontSize = 18.sp,
+            fontSize = 25.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Gray.copy(alpha = 0.6f),
             textAlign = TextAlign.Center
         )
         Text(
             text = "%.2f".format(gpaValue),
-            fontSize = 36.sp,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
             color = progressColor,
             textAlign = TextAlign.Center
