@@ -10,8 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.example.appadvisor.R
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +19,7 @@ import com.example.appadvisor.ui.theme.AppAdvisorTheme
 @Composable
 fun InfoScreen() {
     var student by remember { mutableStateOf(
-        Student(
+        StudentInfo(
             name = "Đinh Quang Huy",
             birthday = "02/12/2002",
             phone = "0845899688",
@@ -136,7 +134,7 @@ private fun InfoRow(
     }
 }
 
-data class Student(
+data class StudentInfo(
     val name: String,
     val birthday: String,
     val phone: String,

@@ -14,9 +14,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun StudentGradeScreen(gpa: Float) {
+fun StudentGradeScreen(
+    navController: NavController,
+    gpa: Float
+) {
 
     Box(
         modifier = Modifier
@@ -59,7 +64,9 @@ fun StudentGradeScreen(gpa: Float) {
                 Spacer(modifier = Modifier.height(40.dp))
 
                 OutlinedButton(
-                    onClick = { /* TODO: Handle click */ },
+                    onClick = {
+                        navController.navigate("score_details")
+                    },
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
                         .height(48.dp)
@@ -85,6 +92,7 @@ fun StudentGradeScreen(gpa: Float) {
 @Composable
 fun StudentGradeScreenPreview() {
     MaterialTheme {
-        StudentGradeScreen(gpa = 1f)
+        val navController = rememberNavController()
+        StudentGradeScreen(navController,gpa = 1f)
     }
 }
