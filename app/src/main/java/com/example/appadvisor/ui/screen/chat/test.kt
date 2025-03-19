@@ -19,10 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.appadvisor.R
 
 data class ChatMessage(
     val id: String,
@@ -115,7 +117,7 @@ fun ChatScreen(
                     shape = RoundedCornerShape(24.dp),
                     leadingIcon = {
                         IconButton(onClick = {}) {
-                            Icon(imageVector = Icons.Filled.Menu, contentDescription = null)
+                            Icon(painter = painterResource(R.drawable.baseline_sentiment_very_satisfied_24), contentDescription = null)
                         }
                     },
                     trailingIcon = {
