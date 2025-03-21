@@ -13,7 +13,7 @@ import com.example.appadvisor.ui.screen.chat.ChatScreen
 import com.example.appadvisor.ui.screen.info.InfoScreen
 import com.example.appadvisor.ui.screen.OnlineForm
 import com.example.appadvisor.ui.search.SearchingScreen
-import com.example.appadvisor.ui.screen.SettingsScreen
+import com.example.appadvisor.ui.screen.settings.SettingsScreen
 import com.example.appadvisor.ui.screen.transcripts.StudentGradeDetailScreen
 import com.example.appadvisor.ui.screen.transcripts.StudentGradeScreen
 import com.example.kmadvisor.ui.screen.LoginScreen
@@ -36,7 +36,7 @@ fun AppNavGraph(navController: NavHostController,isLoggedIn: Boolean?) {
         composable("signup") { SignUpScreen(navController = navController) }
 
         // Bottom navigation bar
-        composable("home") { HomeScreen(navController = navController, role = "STUDENT") }
+        composable("home") { HomeScreen(navController = navController, role = "ADVISOR") }
         composable("search") { SearchingScreen() }
         composable("chat") { ChatScreen() }
         composable("info") { InfoScreen() }

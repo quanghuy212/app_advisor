@@ -24,7 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
 import com.example.appadvisor.data.FeatureCard
-import com.example.appadvisor.data.featureCards
+import com.example.appadvisor.data.studentFeatureCards
 import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarTodoView
 
 
@@ -43,7 +43,7 @@ fun HomeStudentScreen(
         mutableStateOf(true)
     }
 
-    val featureCards = featureCards.map { card ->
+    val featureCards = studentFeatureCards.map { card ->
         FeatureCard(
             title = card.title,
             iconId = card.iconId,

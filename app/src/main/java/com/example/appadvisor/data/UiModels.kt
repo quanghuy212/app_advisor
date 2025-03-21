@@ -1,7 +1,5 @@
 package com.example.appadvisor.data
 
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import com.example.appadvisor.R
 
 
@@ -12,7 +10,7 @@ data class FeatureCard(
     val description: String
 )
 
-val featureCards = listOf(
+val studentFeatureCards = listOf(
     FeatureCard(
         "Calendar",
         R.drawable.calendar,
@@ -27,6 +25,29 @@ val featureCards = listOf(
         "Results",
         R.drawable.target_8992467,
         "Write your thoughts"
+    ),
+    FeatureCard(
+        "Settings",
+        R.drawable.settings_24px,
+        "Customize app"
+    )
+)
+
+val advisorFeatureCard = listOf(
+    FeatureCard(
+        "Calendar",
+        R.drawable.calendar,
+        "Schedule your day"
+    ),
+    FeatureCard(
+        "QL Sinh Viên",
+        R.drawable.baseline_view_list_24,
+        "Thông tin sinh viên quản lý"
+    ),
+    FeatureCard(
+        "Tạo lịch hẹn",
+        R.drawable.appointment,
+        "Schedule your day"
     ),
     FeatureCard(
         "Settings",

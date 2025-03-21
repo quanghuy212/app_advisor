@@ -1,4 +1,4 @@
-package com.example.appadvisor.ui.screen
+package com.example.appadvisor.ui.screen.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,9 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.appadvisor.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +74,7 @@ fun SettingsScreen() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Done,
+                                painter = painterResource(id = R.drawable.dark_mode_24dp),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
