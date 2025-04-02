@@ -1,4 +1,4 @@
-package com.example.appadvisor.ui.search
+package com.example.appadvisor.ui.screen.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

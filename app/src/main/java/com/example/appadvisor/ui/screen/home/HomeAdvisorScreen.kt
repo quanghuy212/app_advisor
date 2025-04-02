@@ -142,7 +142,7 @@ fun HomeAdvisorScreen(
                                 when (card.title) {
                                     "Calendar" -> navController.navigate("calendar")
                                     "Form" -> navController.navigate("form")
-                                    "Results" -> navController.navigate("results")
+                                    "Tạo lịch hẹn" -> navController.navigate("create_appointment")
                                     "Settings" -> navController.navigate("settings")
                                 }
                             },

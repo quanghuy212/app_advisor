@@ -17,4 +17,5 @@ sealed class AppScreens(val route: String) {
     data object Settings: AppScreens(route = "settings")
 
     data object ScoreDetails: AppScreens(route = "score_details")
+    data object CreateAppointment: AppScreens(route = "create_appointment")
 }

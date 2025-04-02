@@ -12,12 +12,13 @@ import com.example.appadvisor.ui.screen.barcode.BarcodeGeneratorScreen
 import com.example.appadvisor.ui.screen.chat.ChatScreen
 import com.example.appadvisor.ui.screen.info.InfoScreen
 import com.example.appadvisor.ui.screen.OnlineForm
-import com.example.appadvisor.ui.search.SearchingScreen
+import com.example.appadvisor.ui.screen.appointment.CreateAppointmentScreen
+import com.example.appadvisor.ui.screen.search.SearchingScreen
 import com.example.appadvisor.ui.screen.settings.SettingsScreen
 import com.example.appadvisor.ui.screen.transcripts.StudentGradeDetailScreen
 import com.example.appadvisor.ui.screen.transcripts.StudentGradeScreen
 import com.example.kmadvisor.ui.screen.LoginScreen
-import com.example.kmadvisor.ui.screen.SignUpScreen
+import com.example.appadvisor.ui.screen.signup.SignUpScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController,isLoggedIn: Boolean?) {
@@ -45,9 +46,10 @@ fun AppNavGraph(navController: NavHostController,isLoggedIn: Boolean?) {
         // Home screen
         composable("calendar") { CalendarTodoScreen() }
         composable("form") { OnlineForm() }
-        composable("results") { StudentGradeScreen(navController = navController, gpa = 3.15f) }
+        composable("results") { StudentGradeScreen(navController = navController,student = student) }
         composable("settings") { SettingsScreen() }
 
         composable("score_details") { StudentGradeDetailScreen(student) }
+        composable("create_appointment") { CreateAppointmentScreen() }
     }
 }

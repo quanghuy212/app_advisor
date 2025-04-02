@@ -1,4 +1,4 @@
-package com.example.kmadvisor.ui.screen
+package com.example.appadvisor.ui.screen.signup
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +56,7 @@ fun SignUpScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    // Var username control username field
+    
     var email by remember {
         mutableStateOf("")
     }
@@ -65,7 +70,7 @@ fun SignUpScreen(
         mutableStateOf("")
     }
 
-    var userName by remember {
+    var role by remember {
         mutableStateOf("")
     }
 
@@ -80,6 +85,12 @@ fun SignUpScreen(
     var isConfirmPasswordVisible by remember {
         mutableStateOf(false)
     }
+
+    var isRoleMenuExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    val roles = listOf("Student", "Advisor")
 
     Box(
         modifier = Modifier
@@ -135,7 +146,6 @@ fun SignUpScreen(
                 value = email,
                 onValueChange = {
                     email = it
-                    userName = it.substringBefore(delimiter = "@")
                 },
                 label = {
                     Text(text = "Email")
@@ -162,41 +172,64 @@ fun SignUpScreen(
                 )
             )
 
-            OutlinedTextField(
-                value = userName,
-                onValueChange = {
-                    userName = it
-                },
-                label = {
-                    Text(text = "Username")
-                },
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null
-                    )
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = { userName = "" }
-                    ) {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = role,
+                    onValueChange = {
+                        role = it
+                    },
+                    label = {
+                        Text(text = "Role")
+                    },
+                    singleLine = true,
+                    leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Clear,
+                            imageVector = Icons.Default.Menu,
                             contentDescription = null
                         )
-                    }
-                },
-                modifier = modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
+                    },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { isRoleMenuExpanded = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowDown,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    modifier = modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    )
                 )
-            )
 
+                DropdownMenu(
+                    expanded = isRoleMenuExpanded,
+                    onDismissRequest = { isRoleMenuExpanded = false },
+                    modifier = Modifier.fillMaxWidth(0.75f)
+                ) {
+                    roles.forEach { roleOption ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = roleOption)
+                            },
+                            onClick = {
+                                role = roleOption
+                                isRoleMenuExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            
             OutlinedTextField(
                 value = password,
                 onValueChange = {

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,7 +34,7 @@ fun StudentGradeDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = {}) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -63,9 +65,13 @@ fun StudentGradeDetailScreen(
 
 @Composable
 fun StudentInfoCard(student: Student) {
+
+    val gpa = student.calculateGPA()
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -80,33 +86,29 @@ fun StudentInfoCard(student: Student) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row {
-                Text(
-                    text = "Mã SV: ",
-                    fontWeight = FontWeight.Medium
-                )
-                Text(text = student.id)
-            }
+            InfoRow(label = "Mã SV: ", value = student.id)
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Row {
-                Text(
-                    text = "Lớp: ",
-                    fontWeight = FontWeight.Medium
-                )
-                Text(text = student.className)
-            }
+            InfoRow(label = "Lớp: ", value = student.className)
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val averageGrade = calculateAverageGrade(student.subjects)
             Text(
-                text = "Điểm trung bình tích lũy: $averageGrade",
+                text = "Điểm trung bình tích lũy: %.2f".format(gpa),
                 fontWeight = FontWeight.Bold,
-                color = getGradeColor(averageGrade)
+                color = getGpaColor(gpa)
             )
         }
+    }
+}
+
+@Composable
+fun InfoRow(label: String, value: String) {
+    Row {
+        Text(text = label, fontWeight = FontWeight.Medium)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = value)
     }
 }
 
@@ -186,7 +188,7 @@ fun GradeTable(subjects: List<SubjectGrade>) {
                             modifier = Modifier.weight(1.5f)
                         )
                         Text(
-                            text = subject.letterGrade,
+                            text = subject.getLetterGrade(),
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold,
                             color = getGradeColor(subject.finalGrade),
@@ -194,7 +196,7 @@ fun GradeTable(subjects: List<SubjectGrade>) {
                         )
                     }
 
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.padding(vertical = 4.dp),
                         color = MaterialTheme.colorScheme.surfaceVariant
                     )
@@ -205,7 +207,6 @@ fun GradeTable(subjects: List<SubjectGrade>) {
 
             // Thống kê tổng kết
             val totalCredits = subjects.sumOf { it.credits }
-            val gpa = calculateAverageGrade(subjects)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -226,41 +227,10 @@ fun GradeTable(subjects: List<SubjectGrade>) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Điểm trung bình (GPA):",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "%.2f".format(gpa),
-                    textAlign = TextAlign.End,
-                    fontWeight = FontWeight.Bold,
-                    color = getGradeColor(gpa),
-                    modifier = Modifier.weight(1f)
-                )
-            }
         }
     }
 }
 
-// Hàm tính điểm trung bình
-fun calculateAverageGrade(subjects: List<SubjectGrade>): Float {
-    if (subjects.isEmpty()) return 0f
-
-    var totalCredits = 0
-    var weightedSum = 0f
-
-    subjects.forEach { subject ->
-        weightedSum += subject.finalGrade * subject.credits
-        totalCredits += subject.credits
-    }
-
-    return if (totalCredits > 0) (weightedSum / totalCredits) else 0f
-}
 
 // Hàm xác định màu sắc dựa trên điểm
 fun getGradeColor(grade: Float): Color {
@@ -269,6 +239,16 @@ fun getGradeColor(grade: Float): Color {
         grade >= 7.0f -> Color(0xFF2196F3) // Xanh dương - B, B+
         grade >= 5.5f -> Color(0xFFFFC107) // Vàng - C, C+
         grade >= 4.0f -> Color(0xFFFF9800) // Cam - D, D+
+        else -> Color(0xFFF44336) // Đỏ - F
+    }
+}
+
+fun getGpaColor(gpa: Float): Color {
+    return when {
+        gpa >= 3.8f -> Color(0xFF4CAF50) // Xanh lá - A, A+
+        gpa >= 3.0f -> Color(0xFF2196F3) // Xanh dương - B, B+
+        gpa >= 2.0f -> Color(0xFFFFC107) // Vàng - C, C+
+        gpa >= 1.0f -> Color(0xFFFF9800) // Cam - D, D+
         else -> Color(0xFFF44336) // Đỏ - F
     }
 }
@@ -285,44 +265,37 @@ fun StudentGradeDetailScreenPreview() {
             SubjectGrade(
                 name = "Lập trình Android",
                 credits = 3,
-                finalGrade = 8.5f,
-                letterGrade = "A"
+                finalGrade = 8.5f
             ),
             SubjectGrade(
                 name = "Cơ sở dữ liệu",
                 credits = 4,
-                finalGrade = 7.8f,
-                letterGrade = "B+"
+                finalGrade = 7.8f
             ),
             SubjectGrade(
                 name = "Mạng máy tính",
                 credits = 3,
-                finalGrade = 6.5f,
-                letterGrade = "C+"
+                finalGrade = 6.5f
             ),
             SubjectGrade(
                 name = "Công nghệ phần mềm",
                 credits = 4,
-                finalGrade = 9.2f,
-                letterGrade = "A+"
+                finalGrade = 9.2f
             ),
             SubjectGrade(
                 name = "Trí tuệ nhân tạo",
                 credits = 3,
-                finalGrade = 8.0f,
-                letterGrade = "B+"
+                finalGrade = 8.0f
             ),
             SubjectGrade(
                 name = "Phân tích thiết kế hệ thống",
                 credits = 4,
-                finalGrade = 7.5f,
-                letterGrade = "B"
+                finalGrade = 7.5f
             ),
             SubjectGrade(
                 name = "Lập trình Web",
                 credits = 3,
-                finalGrade = 8.7f,
-                letterGrade = "A"
+                finalGrade = 8.7f
             )
         )
     )

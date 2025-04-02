@@ -16,11 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.appadvisor.data.Student
+import com.example.appadvisor.data.student
 
 @Composable
 fun StudentGradeScreen(
     navController: NavController,
-    gpa: Float
+    student: Student
 ) {
 
     Box(
@@ -43,12 +45,12 @@ fun StudentGradeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                GPAProgressBar(gpaValue = gpa)
+                GPAProgressBar(gpaValue = student.calculateGPA())
 
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Text(
-                    text = "Số môn nợ: 1",
+                    text = "Số môn nợ: ",
                     fontSize = 16.sp,
                     color = Color.Black
                 )
@@ -92,7 +94,8 @@ fun StudentGradeScreen(
 @Composable
 fun StudentGradeScreenPreview() {
     MaterialTheme {
+        val student = student
         val navController = rememberNavController()
-        StudentGradeScreen(navController,gpa = 1f)
+        StudentGradeScreen(navController,student)
     }
 }
