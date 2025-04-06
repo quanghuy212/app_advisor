@@ -55,7 +55,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     // Var username control username field
-    var username by remember {
+    var emailOrId by remember {
         mutableStateOf("")
     }
 
@@ -84,12 +84,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(50.dp))
 
             OutlinedTextField(
-                value = username,
+                value = emailOrId,
                 onValueChange = {
-                    username = it
+                    emailOrId = it
                 },
                 label = {
-                    Text(text = "Username")
+                    Text(text = "Email or ID")
                 },
                 singleLine = true,
                 leadingIcon = {
@@ -99,7 +99,7 @@ fun LoginScreen(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { username = "" }) {
+                    IconButton(onClick = { emailOrId = "" }) {
                         Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     }
                 },

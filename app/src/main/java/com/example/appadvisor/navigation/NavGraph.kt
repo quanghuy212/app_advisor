@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.appadvisor.data.model.UserRole
 import com.example.appadvisor.data.student
 import com.example.appadvisor.ui.screen.calendar.CalendarTodoScreen
 import com.example.appadvisor.ui.screen.barcode.BarcodeGeneratorScreen
@@ -37,10 +38,11 @@ fun AppNavGraph(navController: NavHostController,isLoggedIn: Boolean?) {
         composable("signup") { SignUpScreen(navController = navController) }
 
         // Bottom navigation bar
-        composable("home") { HomeScreen(navController = navController, role = "ADVISOR") }
+        composable("home") { HomeScreen(navController = navController, role = UserRole.ADVISOR) }
         composable("search") { SearchingScreen() }
         composable("chat") { ChatScreen() }
-        composable("info") { InfoScreen() }
+        // Chua xu li Info Screen
+        //composable("info") { InfoScreen() }
         composable("barcode") { BarcodeGeneratorScreen(navController = navController) }
 
         // Home screen

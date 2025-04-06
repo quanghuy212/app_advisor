@@ -3,15 +3,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.appadvisor.data.model.UserRole
 import com.example.appadvisor.ui.screen.home.HomeAdvisorScreen
 import com.example.appadvisor.ui.screen.home.HomeStudentScreen
 
 @Composable
-fun HomeScreen(navController: NavController,role: String) {
+fun HomeScreen(
+    navController: NavController,
+    role: UserRole
+) {
     when(role) {
-        "STUDENT" -> HomeStudentScreen(navController = navController)
-        "ADVISOR" -> HomeAdvisorScreen(navController = navController)
-        else -> Text("Không có quyền truy cập")
+        UserRole.STUDENT -> HomeStudentScreen(navController = navController)
+        UserRole.ADVISOR -> HomeAdvisorScreen(navController = navController)
     }
 }
 
@@ -19,5 +22,5 @@ fun HomeScreen(navController: NavController,role: String) {
 @Composable
 fun PreviewHomeScreen() {
     val navController = rememberNavController()
-    HomeScreen(navController, role = "ADVISOR")
+    HomeScreen(navController, role = UserRole.ADVISOR)
 }

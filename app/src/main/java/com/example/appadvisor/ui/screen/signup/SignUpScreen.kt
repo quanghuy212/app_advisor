@@ -74,6 +74,10 @@ fun SignUpScreen(
         mutableStateOf("")
     }
 
+    var department by remember {
+        mutableStateOf("")
+    }
+
     var confirmPassword by remember {
         mutableStateOf("")
     }
@@ -90,7 +94,14 @@ fun SignUpScreen(
         mutableStateOf(false)
     }
 
+    var isDepartmentMenuExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    // 2 role
     val roles = listOf("Student", "Advisor")
+    // 3 department
+    val departments = listOf("CNTT","ATTT","DTVT")
 
     Box(
         modifier = Modifier
@@ -225,6 +236,65 @@ fun SignUpScreen(
                                 isRoleMenuExpanded = false
                             }
                         )
+                    }
+                }
+            }
+
+            if (role == "Advisor") {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = department,
+                        onValueChange = {
+                            department = it
+                        },
+                        label = {
+                            Text(text = "Department")
+                        },
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = null
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { isDepartmentMenuExpanded = true }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowDown,
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        modifier = modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        )
+                    )
+
+                    DropdownMenu(
+                        expanded = isDepartmentMenuExpanded,
+                        onDismissRequest = { isDepartmentMenuExpanded = false },
+                        modifier = Modifier.fillMaxWidth(0.75f)
+                    ) {
+                        departments.forEach { roleOption ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = roleOption)
+                                },
+                                onClick = {
+                                    department = roleOption
+                                    isDepartmentMenuExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
