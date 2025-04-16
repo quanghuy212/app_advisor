@@ -1,5 +1,6 @@
 package com.example.appadvisor.ui.screen.signup
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,13 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -29,12 +28,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
@@ -54,33 +57,13 @@ import com.example.appadvisor.ui.theme.AppAdvisorTheme
 @Composable
 fun SignUpScreen(
     navController: NavController,
+    viewModel: SignUpViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
+
+    val state = viewModel.uiState.collectAsState()
     
-    var email by remember {
-        mutableStateOf("")
-    }
-
-    // Var password control password field
-    var password by remember {
-        mutableStateOf("")
-    }
-
-    var phoneNumber by remember {
-        mutableStateOf("")
-    }
-
-    var role by remember {
-        mutableStateOf("")
-    }
-
-    var department by remember {
-        mutableStateOf("")
-    }
-
-    var confirmPassword by remember {
-        mutableStateOf("")
-    }
+    val errors = viewModel.fieldErrors.collectAsState()
 
     var isPasswordVisible by remember {
         mutableStateOf(false)
@@ -116,26 +99,27 @@ fun SignUpScreen(
         ) {
             Text(text = "Sign Up form", fontSize = 50.sp, fontWeight = FontWeight.Bold)
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(36.dp))
 
             OutlinedTextField(
-                value = phoneNumber,
-                onValueChange = {
-                    phoneNumber = it
-                },
+                value = state.value.name,
+                onValueChange = viewModel::onNameChange,
+                isError = errors.value.containsValue("name"),
                 label = {
-                    Text(text = "Phone number")
+                    Text(text = "Full name")
                 },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Phone,
+                        imageVector = Icons.Default.Person,
                         contentDescription = null
                     )
                 },
                 trailingIcon = {
                     IconButton(
-                        onClick = { phoneNumber = "" }
+                        onClick = {
+                            viewModel.onNameChange("")
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
@@ -143,8 +127,11 @@ fun SignUpScreen(
                         )
                     }
                 },
+                supportingText = {
+                    errors.value["name"]?.let { Text(it, color = Color.Red) }
+                },
                 modifier = modifier
-                    .padding(8.dp)
+                    .padding(4.dp)
                     .fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
@@ -154,10 +141,9 @@ fun SignUpScreen(
             )
 
             OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                },
+                value = state.value.email,
+                onValueChange = viewModel::onEmailChange,
+                isError = errors.value.containsValue("email"),
                 label = {
                     Text(text = "Email")
                 },
@@ -169,12 +155,19 @@ fun SignUpScreen(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { email = "" }) {
+                    IconButton(
+                        onClick = {
+                            viewModel.onEmailChange("")
+                        }
+                    ) {
                         Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     }
                 },
+                supportingText = {
+                    errors.value["email"]?.let { Text(it, color = Color.Red) }
+                },
                 modifier = modifier
-                    .padding(8.dp)
+                    .padding(4.dp)
                     .fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
@@ -187,10 +180,9 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    value = role,
-                    onValueChange = {
-                        role = it
-                    },
+                    value = state.value.role,
+                    onValueChange = viewModel::onRoleChange,
+                    isError = errors.value.containsValue("role"),
                     label = {
                         Text(text = "Role")
                     },
@@ -211,8 +203,11 @@ fun SignUpScreen(
                             )
                         }
                     },
+                    supportingText = {
+                        errors.value["role"]?.let { Text(it, color = Color.Red) }
+                    },
                     modifier = modifier
-                        .padding(8.dp)
+                        .padding(4.dp)
                         .fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,
                     keyboardOptions = KeyboardOptions(
@@ -232,7 +227,7 @@ fun SignUpScreen(
                                 Text(text = roleOption)
                             },
                             onClick = {
-                                role = roleOption
+                                viewModel.onRoleChange(roleOption)
                                 isRoleMenuExpanded = false
                             }
                         )
@@ -240,15 +235,14 @@ fun SignUpScreen(
                 }
             }
 
-            if (role == "Advisor") {
+            if (state.value.role == "Advisor") {
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = department,
-                        onValueChange = {
-                            department = it
-                        },
+                        value = state.value.department,
+                        onValueChange = viewModel::onDepartmentChange,
+                        isError = errors.value.containsValue("department"),
                         label = {
                             Text(text = "Department")
                         },
@@ -269,8 +263,11 @@ fun SignUpScreen(
                                 )
                             }
                         },
+                        supportingText = {
+                            errors.value["department"]?.let { Text(it, color = Color.Red) }
+                        },
                         modifier = modifier
-                            .padding(8.dp)
+                            .padding(4.dp)
                             .fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium,
                         keyboardOptions = KeyboardOptions(
@@ -290,21 +287,52 @@ fun SignUpScreen(
                                     Text(text = roleOption)
                                 },
                                 onClick = {
-                                    department = roleOption
+                                    viewModel.onDepartmentChange(value = roleOption)
                                     isDepartmentMenuExpanded = false
                                 }
                             )
                         }
                     }
                 }
+            } else {
+                OutlinedTextField(
+                    value = state.value.classroom,
+                    onValueChange = viewModel::onClassroomChange,
+                    isError = errors.value.containsValue("classroom"),
+                    label = {
+                        Text(text = "Classroom")
+                    },
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.teach),
+                            contentDescription = null
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { viewModel.onClassroomChange("") }) {
+                            Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+                        }
+                    },
+                    supportingText = {
+                        errors.value["classroom"]?.let { Text(it, color = Color.Red) }
+                    },
+                    modifier = modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    )
+                )
             }
 
             
             OutlinedTextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                },
+                value = state.value.password,
+                onValueChange = viewModel::onPasswordChange,
+                isError = errors.value.containsValue("password"),
                 label = {
                     Text(text = "Password")
                 },
@@ -329,8 +357,11 @@ fun SignUpScreen(
                     }
                 },
                 visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                supportingText = {
+                    errors.value["password"]?.let { Text(it, color = Color.Red) }
+                },
                 modifier = modifier
-                    .padding(8.dp)
+                    .padding(4.dp)
                     .fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
@@ -340,10 +371,9 @@ fun SignUpScreen(
             )
 
             OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = {
-                    confirmPassword = it
-                },
+                value = state.value.confirmPassword,
+                onValueChange = viewModel::onConfirmPasswordChange,
+                isError = errors.value.containsValue("confirmPassword"),
                 label = {
                     Text(text = "Confirm Password")
                 },
@@ -368,8 +398,11 @@ fun SignUpScreen(
                     }
                 },
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                supportingText = {
+                    errors.value["confirmPassword"]?.let { Text(it, color = Color.Red) }
+                },
                 modifier = modifier
-                    .padding(8.dp)
+                    .padding(4.dp)
                     .fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
@@ -382,8 +415,8 @@ fun SignUpScreen(
 
             Button(
                 onClick = {
-                    // Navigate to Home
-                    navController.navigate("home")
+                    // isSuccess : false -> true
+                    viewModel.signUp(role = state.value.role)
                 },
                 modifier = modifier.fillMaxWidth(0.5f),
                 shape = RoundedCornerShape(12.dp)
@@ -391,6 +424,13 @@ fun SignUpScreen(
                 Text(text = "Sign up", fontStyle = FontStyle.Italic, fontSize = 20.sp)
             }
 
+            // Navigate login when isSuccess = true
+            LaunchedEffect(key1 = state.value.isSuccess) {
+                if (state.value.isSuccess) {
+                    navController.navigate("login")
+                    viewModel.reset()
+                }
+            }
             Spacer(modifier = Modifier.height(20.dp))
 
             Row(

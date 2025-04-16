@@ -23,7 +23,9 @@ import com.example.appadvisor.navigation.AppNavGraph
 import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.screen.navigation.BottomNavBar
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
