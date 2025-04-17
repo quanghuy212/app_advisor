@@ -2,8 +2,10 @@ package com.example.appadvisor.di
 
 import com.example.appadvisor.data.network.AdvisorApiService
 import com.example.appadvisor.data.network.StudentApiService
+import com.example.appadvisor.data.network.UserApiService
 import com.example.appadvisor.data.repository.AdvisorRepository
 import com.example.appadvisor.data.repository.StudentRepository
+import com.example.appadvisor.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +30,19 @@ object AppModule {
             .build()
     }
 
+    // Provide User ApiService
+    @Provides
+    @Singleton
+    fun provideUserApiService(retrofit: Retrofit): UserApiService {
+        return retrofit.create(UserApiService::class.java)
+    }
+
+    // Provide User Repository
+    @Provides
+    @Singleton
+    fun provideUserRepository(userApiService: UserApiService): UserRepository {
+        return UserRepository(userApiService)
+    }
     // Provide Student ApiService
     @Provides
     @Singleton

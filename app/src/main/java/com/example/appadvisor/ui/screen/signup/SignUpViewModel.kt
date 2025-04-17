@@ -5,9 +5,9 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appadvisor.data.model.Advisor
-import com.example.appadvisor.data.model.Student
-import com.example.appadvisor.data.repository.AdvisorRepository
-import com.example.appadvisor.data.repository.StudentRepository
+import com.example.appadvisor.data.model.SignUpStudentRequest
+import com.example.appadvisor.data.model.User
+import com.example.appadvisor.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val studentRepository: StudentRepository,
-    private val advisorRepository: AdvisorRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     // Ui state
@@ -60,85 +59,44 @@ class SignUpViewModel @Inject constructor(
     fun signUp(role: String) {
 
         if (!validate()) return
-
-        when(role) {
-            "Student" -> studentSignUp()
-            "Advisor" -> advisorSignUp()
-            else -> {
-                Log.e("SignUp ViewModel","Role invalid: $role")
-            }
-        }
+        userSignUp(role)
     }
 
-    private fun studentSignUp() {
+    private fun userSignUp(role: String) {
         val state = uiState.value
+        if (role == "Student") {
 
-        val student = Student(
-            name = state.name,
-            email = state.email,
-            classroom = state.classroom,
-            password = state.password
-        )
+            val student = User(
+                name = state.name,
+                email = state.email,
+                password = state.password,
+                role = state.role,
+                classroom = state.classroom
+            )
+            viewModelScope.launch {
+                try {
+                    val result = userRepository.signUpUser(user = student)
 
-        viewModelScope.launch {
-            try {
-                val result = studentRepository.addStudent(student)
+                    result.fold(
+                        onSuccess = {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                isSuccess = true
+                            )
+                        },
+                        onFailure = {
+                            Log.e("SignUp ViewModel",it.message.toString())
+                            _uiState.value = _uiState.value.copy(
+                                isSuccess = false,
+                                isLoading = false
+                            )
+                        }
+                    )
 
-                result.fold(
-                    onSuccess = {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            isSuccess = true
-                        )
-                    },
-                    onFailure = {
-                        Log.e("SignUp ViewModel",it.message.toString())
-                        _uiState.value = _uiState.value.copy(
-                            isSuccess = false,
-                            isLoading = false
-                        )
-                    }
-                )
-            } catch (e: Exception) {
-                Log.e("Error SignUp Viewmodel",e.message.toString())
+                } catch (e: Exception) {
+                    Log.e("Error SignUp Viewmodel",e.message.toString())
+                }
             }
-
-        }
-    }
-
-    private fun advisorSignUp() {
-        val state = uiState.value
-
-        val advisor = Advisor(
-            name = state.name,
-            email = state.email,
-            department = state.department,
-            password = state.password
-        )
-
-        viewModelScope.launch {
-            try {
-                val result = advisorRepository.addAdvisor(advisor)
-
-                result.fold(
-                    onSuccess = {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            isSuccess = true
-                        )
-                    },
-                    onFailure = {
-                        Log.e("SignUp ViewModel",it.message.toString())
-                        _uiState.value = _uiState.value.copy(
-                            isSuccess = false,
-                            isLoading = false
-                        )
-                    }
-                )
-            } catch (e: Exception) {
-                Log.e("Error SignUp Viewmodel",e.message.toString())
-            }
-
         }
     }
 
