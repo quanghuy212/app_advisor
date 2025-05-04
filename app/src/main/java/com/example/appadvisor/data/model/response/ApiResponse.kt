@@ -1,4 +1,4 @@
-package com.example.appadvisor.data.network
+package com.example.appadvisor.data.model.response
 
 
 data class ApiResponse(

@@ -1,3 +1,4 @@
+/*
 package com.example.appadvisor.ui.screen.info
 
 import androidx.compose.foundation.layout.*
@@ -15,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.appadvisor.data.model.PersonInfo
-import com.example.appadvisor.data.model.UserRole
+import com.example.appadvisor.data.model.Role
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 @Composable
@@ -213,4 +214,4 @@ fun PreviewInfoAdvisor() {
             )
         )
     }
-}
+}*/

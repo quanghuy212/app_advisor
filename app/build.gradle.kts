@@ -82,9 +82,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
+    // Hilt
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
     implementation("com.google.dagger:hilt-android:2.50")
     ksp("com.google.dagger:hilt-compiler:2.50")
+
+    // Data store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 }

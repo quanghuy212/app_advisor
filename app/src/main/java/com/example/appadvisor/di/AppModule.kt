@@ -1,14 +1,13 @@
 package com.example.appadvisor.di
 
-import com.example.appadvisor.data.network.AdvisorApiService
-import com.example.appadvisor.data.network.StudentApiService
-import com.example.appadvisor.data.network.UserApiService
-import com.example.appadvisor.data.repository.AdvisorRepository
-import com.example.appadvisor.data.repository.StudentRepository
+import android.content.Context
+import com.example.appadvisor.data.local.TokenManager
+import com.example.appadvisor.data.network.AuthApiService
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -33,41 +32,22 @@ object AppModule {
     // Provide User ApiService
     @Provides
     @Singleton
-    fun provideUserApiService(retrofit: Retrofit): UserApiService {
-        return retrofit.create(UserApiService::class.java)
+    fun provideAuthApiService(retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
     }
 
     // Provide User Repository
     @Provides
     @Singleton
-    fun provideUserRepository(userApiService: UserApiService): UserRepository {
-        return UserRepository(userApiService)
-    }
-    // Provide Student ApiService
-    @Provides
-    @Singleton
-    fun provideStudentApiService(retrofit: Retrofit): StudentApiService {
-        return retrofit.create(StudentApiService::class.java)
+    fun provideUserRepository(authApiService: AuthApiService, tokenManager: TokenManager): UserRepository {
+        return UserRepository(authApiService, tokenManager)
     }
 
-    // Provide Student Repository
+
     @Provides
     @Singleton
-    fun provideStudentRepository(studentApiService: StudentApiService): StudentRepository {
-        return StudentRepository(studentApiService)
-    }
-    
-    // Provide Advisor Repository
-    @Provides
-    @Singleton
-    fun provideAdvisorRepository(advisorApiService: AdvisorApiService): AdvisorRepository {
-        return AdvisorRepository(advisorApiService)
+    fun provideTokenManager(@ApplicationContext context: Context): TokenManager {
+        return TokenManager(context)
     }
 
-    // Provide Advisor ApiService
-    @Provides
-    @Singleton
-    fun provideAdvisorApiService(retrofit: Retrofit): AdvisorApiService {
-        return retrofit.create(AdvisorApiService::class.java)
-    }
 }

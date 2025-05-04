@@ -19,14 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.appadvisor.data.local.TokenManager
 import com.example.appadvisor.navigation.AppNavGraph
 import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.screen.navigation.BottomNavBar
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var tokenManager: TokenManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -36,8 +42,6 @@ class MainActivity : ComponentActivity() {
                 val navBackStackEntry = navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry.value?.destination?.route
 
-                // State login
-                val isLoggedIn by remember { mutableStateOf(false) }
                 Scaffold(
                     modifier = Modifier.imePadding(),
                     bottomBar = {
@@ -57,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
                 ) { paddingValues ->
                     Box(modifier = Modifier.padding(paddingValues)) {
-                        AppNavGraph(navController, isLoggedIn)
+                        AppNavGraph(navController,tokenManager)
                     }
                 }
             }

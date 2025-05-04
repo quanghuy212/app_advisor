@@ -4,9 +4,9 @@ import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.appadvisor.data.model.Advisor
-import com.example.appadvisor.data.model.SignUpStudentRequest
-import com.example.appadvisor.data.model.User
+import com.example.appadvisor.data.model.Department
+import com.example.appadvisor.data.model.Role
+import com.example.appadvisor.data.model.request.SignUpRequest
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,58 +44,62 @@ class SignUpViewModel @Inject constructor(
         _uiState.update { it.copy(confirmPassword = value) }
     }
 
-    fun onRoleChange(value: String) {
+    fun onRoleChange(value: Role) {
         _uiState.update { it.copy(role = value) }
     }
 
-    fun onDepartmentChange(value: String) {
+    fun onDepartmentChange(value: Department) {
         _uiState.update { it.copy(department = value) }
     }
 
-    fun onClassroomChange(value: String) {
-        _uiState.update { it.copy(classroom = value) }
-    }
-
-    fun signUp(role: String) {
-
+    fun signUp() {
         if (!validate()) return
-        userSignUp(role)
-    }
+        //userSignUp(role)
 
-    private fun userSignUp(role: String) {
         val state = uiState.value
-        if (role == "Student") {
 
-            val student = User(
-                name = state.name,
+        val user = if (state.role == Role.STUDENT) {
+            // Student
+            SignUpRequest(
                 email = state.email,
-                password = state.password,
+                name = state.name,
                 role = state.role,
-                classroom = state.classroom
+                password = state.password,
+                department = null
             )
-            viewModelScope.launch {
-                try {
-                    val result = userRepository.signUpUser(user = student)
+        } else {
+            // Advisor
+            SignUpRequest(
+                email = state.email,
+                name = state.name,
+                role = state.role,
+                password = state.password,
+                department = state.department
+            )
+        }
 
-                    result.fold(
-                        onSuccess = {
-                            _uiState.value = _uiState.value.copy(
-                                isLoading = false,
-                                isSuccess = true
-                            )
-                        },
-                        onFailure = {
-                            Log.e("SignUp ViewModel",it.message.toString())
-                            _uiState.value = _uiState.value.copy(
-                                isSuccess = false,
-                                isLoading = false
-                            )
-                        }
-                    )
+        viewModelScope.launch {
+            try {
+                val result = userRepository.signUp(user)
 
-                } catch (e: Exception) {
-                    Log.e("Error SignUp Viewmodel",e.message.toString())
-                }
+                result.fold(
+                    onSuccess = {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            isSuccess = true
+                        )
+                    },
+                    onFailure = {
+                        Log.e("SignUp ViewModel",it.message.toString())
+                        _uiState.value = _uiState.value.copy(
+                            isSuccess = false,
+                            isLoading = false
+                        )
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("Error SignUp Viewmodel",e.message.toString())
             }
         }
     }
@@ -105,7 +109,7 @@ class SignUpViewModel @Inject constructor(
         Log.d("SignUpViewModel", "resetState: ${_uiState.value}")
     }
 
-    fun validate(): Boolean {
+    private fun validate(): Boolean {
         val state = uiState.value
         val errors = mutableMapOf<String, String>()
 
@@ -127,18 +131,6 @@ class SignUpViewModel @Inject constructor(
         // Confirm Password validate
         if (state.confirmPassword != state.password) {
             errors["confirmPassword"] = "Mật khẩu không khớp"
-        }
-
-        // Role validate
-        if (state.role.isBlank()) {
-            errors["role"] = "Vui lòng chọn vai trò"
-        }
-
-        // Classroom && Department validate
-        if (state.role == "Student" && state.classroom.isBlank()) {
-            errors["classroom"] = "Vui lòng nhập lớp học"
-        } else if (state.role == "Advisor" && state.department.isBlank()) {
-            errors["department"] = "Vui lòng chọn khoa"
         }
 
         _fieldErrors.value = errors
