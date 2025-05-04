@@ -1,5 +1,6 @@
-package com.example.kmadvisor.ui.screen
+package com.example.appadvisor.ui.screen.login
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,12 +24,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
@@ -52,20 +53,22 @@ This file contains login form ui
 @Composable
 fun LoginScreen(
     navController: NavController,
+    loginViewModel: LoginViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
-    // Var username control username field
-    var emailOrId by remember {
-        mutableStateOf("")
-    }
 
-    // Var password control password field
-    var password by remember {
-        mutableStateOf("")
-    }
+    val state = loginViewModel.uiState.collectAsState()
 
-    var isPasswordVisible by remember {
-        mutableStateOf(false)
+    val errors = loginViewModel.fieldErrors.collectAsState()
+
+    LaunchedEffect(key1 = state.value.isSuccess) {
+        if(state.value.isSuccess) {
+            navController.navigate("home") {
+                popUpTo("login") {
+                    inclusive = true
+                }
+            }
+        }
     }
 
     Box(
@@ -84,12 +87,10 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(50.dp))
 
             OutlinedTextField(
-                value = emailOrId,
-                onValueChange = {
-                    emailOrId = it
-                },
+                value = state.value.email,
+                onValueChange = loginViewModel::onEmailChange,
                 label = {
-                    Text(text = "Email or ID")
+                    Text(text = "Email")
                 },
                 singleLine = true,
                 leadingIcon = {
@@ -99,9 +100,12 @@ fun LoginScreen(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { emailOrId = "" }) {
+                    IconButton(onClick = { loginViewModel.onEmailChange("") }) {
                         Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     }
+                },
+                supportingText = {
+                    errors.value["emailOrId"]?.let { Text(it, color = Color.Red) }
                 },
                 modifier = modifier
                     .padding(8.dp)
@@ -115,15 +119,13 @@ fun LoginScreen(
 
 
             OutlinedTextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                },
+                value = state.value.password,
+                onValueChange = loginViewModel::onPasswordChange,
                 label = {
-                    Text(text = "PIN")
+                    Text(text = "Password")
                 },
                 placeholder = {
-                    Text(text = "Enter PIN pass")
+                    Text(text = "Enter password")
                 },
                 singleLine = true,
                 leadingIcon = {
@@ -133,22 +135,25 @@ fun LoginScreen(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    IconButton(onClick = { loginViewModel.onIsPasswordVisibleChange(!state.value.isPasswordVisible) }) {
                         Icon(
                             painter = painterResource(
-                                id = if (isPasswordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24
+                                id = if (state.value.isPasswordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24
                             ),
                             contentDescription = null
                         )
                     }
                 },
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                supportingText = {
+                    errors.value["password"]?.let { Text(it, color = Color.Red) }
+                },
+                visualTransformation = if (state.value.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.NumberPassword,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 )
             )
@@ -170,11 +175,11 @@ fun LoginScreen(
             Button(
                 onClick = {
                     // Navigate to Home Screen
-                    navController.navigate("home") {
-                        popUpTo("login") {
-                            inclusive = true
-                        }
-                    }
+                    loginViewModel.validate()
+                    Log.d("Login Screen","Validate true")
+                    loginViewModel.login()
+                    Log.d("Login Screen","Login successfully")
+
                 },
                 modifier = modifier.fillMaxWidth(0.5f),
                 shape = RoundedCornerShape(12.dp)
@@ -199,6 +204,7 @@ fun LoginScreen(
                     modifier = Modifier.clickable {
                         // Navigate to Sign Up Screen
                         navController.navigate("signup")
+                        loginViewModel.reset()
                     }
                 )
             }

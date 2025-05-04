@@ -5,7 +5,7 @@ data class PersonInfo(
     val birthday: String,
     val phone: String,
     val email: String,
-    val role: UserRole,
+    val role: Role,
     val major: String? = null, // Only student
     val batch: String? = null,  // Only student
     val department: String? = null // Only advisor

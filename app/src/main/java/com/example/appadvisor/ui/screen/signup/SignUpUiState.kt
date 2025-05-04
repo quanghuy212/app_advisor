@@ -1,13 +1,15 @@
 package com.example.appadvisor.ui.screen.signup
 
+import com.example.appadvisor.data.model.Department
+import com.example.appadvisor.data.model.Role
+
 data class SignUpUiState(
-    val email: String = "",
-    val name: String = "",
-    val password: String = "",
-    val confirmPassword: String = "",
-    val role: String = "",
-    val department: String = "",
-    val classroom: String = "",
+    var email: String = "",
+    var name: String = "",
+    var password: String = "",
+    var confirmPassword: String = "",
+    var role: Role = Role.STUDENT,
+    var department: Department = Department.ATTT,
 
     var isLoading: Boolean = false,
     var isSuccess: Boolean = false

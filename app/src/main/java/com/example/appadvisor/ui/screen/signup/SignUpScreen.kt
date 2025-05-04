@@ -1,6 +1,5 @@
 package com.example.appadvisor.ui.screen.signup
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,13 +51,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
+import com.example.appadvisor.data.model.Department
+import com.example.appadvisor.data.model.Role
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 @Composable
 fun SignUpScreen(
+    modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: SignUpViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    viewModel: SignUpViewModel = hiltViewModel()
 ) {
 
     val state = viewModel.uiState.collectAsState()
@@ -82,9 +83,9 @@ fun SignUpScreen(
     }
 
     // 2 role
-    val roles = listOf("Student", "Advisor")
+    val roles = Role.entries
     // 3 department
-    val departments = listOf("CNTT","ATTT","DTVT")
+    val departments = Department.entries
 
     Box(
         modifier = Modifier
@@ -180,8 +181,9 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    value = state.value.role,
-                    onValueChange = viewModel::onRoleChange,
+                    value = state.value.role.name,
+                    onValueChange = {},//viewModel::onRoleChange,
+                    readOnly = true,
                     isError = errors.value.containsValue("role"),
                     label = {
                         Text(text = "Role")
@@ -204,16 +206,12 @@ fun SignUpScreen(
                         }
                     },
                     supportingText = {
-                        errors.value["role"]?.let { Text(it, color = Color.Red) }
+                        //errors.value["role"]?.let { Text(it, color = Color.Red) }
                     },
                     modifier = modifier
                         .padding(4.dp)
                         .fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
-                    )
                 )
 
                 DropdownMenu(
@@ -224,7 +222,7 @@ fun SignUpScreen(
                     roles.forEach { roleOption ->
                         DropdownMenuItem(
                             text = {
-                                Text(text = roleOption)
+                                Text(text = roleOption.name)
                             },
                             onClick = {
                                 viewModel.onRoleChange(roleOption)
@@ -235,13 +233,14 @@ fun SignUpScreen(
                 }
             }
 
-            if (state.value.role == "Advisor") {
+            if (state.value.role == Role.ADVISOR) {
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = state.value.department,
-                        onValueChange = viewModel::onDepartmentChange,
+                        value = state.value.department.name,
+                        onValueChange = {},//viewModel::onDepartmentChange,
+                        readOnly = true,
                         isError = errors.value.containsValue("department"),
                         label = {
                             Text(text = "Department")
@@ -270,10 +269,6 @@ fun SignUpScreen(
                             .padding(4.dp)
                             .fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Next
-                        )
                     )
 
                     DropdownMenu(
@@ -284,7 +279,7 @@ fun SignUpScreen(
                         departments.forEach { roleOption ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = roleOption)
+                                    Text(text = roleOption.name)
                                 },
                                 onClick = {
                                     viewModel.onDepartmentChange(value = roleOption)
@@ -294,38 +289,6 @@ fun SignUpScreen(
                         }
                     }
                 }
-            } else {
-                OutlinedTextField(
-                    value = state.value.classroom,
-                    onValueChange = viewModel::onClassroomChange,
-                    isError = errors.value.containsValue("classroom"),
-                    label = {
-                        Text(text = "Classroom")
-                    },
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.teach),
-                            contentDescription = null
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { viewModel.onClassroomChange("") }) {
-                            Icon(imageVector = Icons.Default.Clear, contentDescription = null)
-                        }
-                    },
-                    supportingText = {
-                        errors.value["classroom"]?.let { Text(it, color = Color.Red) }
-                    },
-                    modifier = modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    )
-                )
             }
 
             
@@ -416,7 +379,7 @@ fun SignUpScreen(
             Button(
                 onClick = {
                     // isSuccess : false -> true
-                    viewModel.signUp(role = state.value.role)
+                    viewModel.signUp()
                 },
                 modifier = modifier.fillMaxWidth(0.5f),
                 shape = RoundedCornerShape(12.dp)
@@ -460,6 +423,6 @@ fun SignUpScreen(
 fun PreviewSignUpScreen() {
     AppAdvisorTheme {
         val navController = rememberNavController()
-        SignUpScreen(navController)
+        SignUpScreen(modifier = Modifier,navController)
     }
 }
