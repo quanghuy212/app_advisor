@@ -4,8 +4,8 @@ import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.appadvisor.data.model.Department
-import com.example.appadvisor.data.model.Role
+import com.example.appadvisor.data.model.enums.Department
+import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.data.model.request.SignUpRequest
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

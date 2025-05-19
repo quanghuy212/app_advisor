@@ -2,11 +2,26 @@ package com.example.appadvisor.ui.screen.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,7 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.appadvisor.data.DateTodos
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.appadvisor.data.DailyTasks
+import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
@@ -27,12 +45,18 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun WeeklyCalendarTodoView(
-    onDateSelected: (LocalDate) -> Unit = {}
+fun WeeklyCalendarSection(
+    navController: NavController,
+    calendarViewModel: CalendarViewModel = hiltViewModel(),
 ) {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var dateTodosList by remember {
-        mutableStateOf(generateSampleTodos())
+
+    val selectedDate by calendarViewModel.selectedDate.collectAsState()
+    val allTasks by calendarViewModel.allTasks.collectAsState()
+    val dailyTasksList by calendarViewModel.dailyTasksList.collectAsState()
+    val showAddBottomSheet by calendarViewModel.showAddTaskBottomSheet.collectAsState()
+
+    LaunchedEffect(Unit) {
+        calendarViewModel.loadTasks()
     }
 
     Column(
@@ -44,38 +68,45 @@ fun WeeklyCalendarTodoView(
         // Weekly Calendar Section
         WeeklyCalendarSection(
             selectedDate = selectedDate,
-            dateTodosList = dateTodosList,
-            onDateSelected = {
-                selectedDate = it
-                onDateSelected(it)
-            }
+            dailyTasksList = dailyTasksList,
+            onDateSelected = calendarViewModel::onDateSelected
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Todo Section
-        TodoSection(
+        TaskListForSelectedDate(
             selectedDate = selectedDate,
-            dateTodosList = dateTodosList,
-            onTodoToggle = { todo, date ->
-                dateTodosList = dateTodosList.map {
-                    if (it.date == date) {
-                        it.copy(todos = it.todos.map { existingTodo ->
-                            if (existingTodo.id == todo.id)
-                                todo.copy(isCompleted = !todo.isCompleted)
-                            else existingTodo
-                        })
-                    } else it
-                }
+            dailyTasksList = dailyTasksList,
+            onTaskToggle = { task, date ->
+                calendarViewModel.toggleTaskCompletion(task, date)
+            },
+            onAddButtonClick = {
+                calendarViewModel.toggleAddTaskBottomSheet()
+            },
+            onTaskClick = { task ->
+                navController.navigate(AppScreens.TaskDetails.withId(task.id))
             }
         )
+
+        if (showAddBottomSheet) {
+            AddTaskBottomSheet(
+                onDismiss = {
+                    calendarViewModel.closeAddTaskBottomSheet()
+                },
+                onSave = {
+                    calendarViewModel.saveTask()
+                    calendarViewModel.closeAddTaskBottomSheet()
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun WeeklyCalendarSection(
     selectedDate: LocalDate,
-    dateTodosList: List<DateTodos>,
+    dailyTasksList: List<DailyTasks>,
     onDateSelected: (LocalDate) -> Unit
 ) {
     val currentWeek = remember { LocalDate.now().minusDays((LocalDate.now().dayOfWeek.value - 1).toLong()) }
@@ -115,8 +146,8 @@ fun WeeklyCalendarSection(
             WeekCalendar(
                 state = weekCalendarState,
                 dayContent = { day ->
-                    val hasTodos = dateTodosList.any {
-                        it.date == day.date && it.todos.isNotEmpty()
+                    val hasTodos = dailyTasksList.any {
+                        it.date == day.date && it.tasks.isNotEmpty()
                     }
 
                     WeeklyCalendarDayItem(
@@ -179,13 +210,13 @@ fun WeeklyCalendarDayItem(
     }
 }
 
-// Reuse the existing TodoSection, TodoItemView, TodoItem, and DateTodos from the previous implementation
-// Make sure to import these or copy them from the MonthlyCalendar.kt file
+// Reuse the existing TodoSection, TodoItemView, Task, and DailyTasks from the previous implementation
+// Make sure to import these or copy them from the MonthlyCalendarScreen.kt file
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewWeeklyCalendar() {
     AppAdvisorTheme {
-        WeeklyCalendarTodoView()
+        //WeeklyCalendarSection()
     }
 }

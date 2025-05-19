@@ -17,6 +17,11 @@ val studentFeatureCards = listOf(
         "Schedule your day"
     ),
     FeatureCard(
+        "Appointment",
+        R.drawable.calendar,
+        "Appointment"
+    ),
+    FeatureCard(
         "Form",
         R.drawable.description,
         "Manage your tasks"
