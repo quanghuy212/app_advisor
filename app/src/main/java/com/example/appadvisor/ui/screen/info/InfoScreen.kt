@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.appadvisor.data.model.PersonInfo
-import com.example.appadvisor.data.model.Role
+import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 @Composable

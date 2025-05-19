@@ -25,11 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
 import com.example.appadvisor.data.FeatureCard
 import com.example.appadvisor.data.studentFeatureCards
-import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarTodoView
-
-
-
-
+import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,7 +115,7 @@ fun HomeStudentScreen(
 
 
         AnimatedVisibility(visible = isCalendarShown, enter = fadeIn(), exit = fadeOut()) {
-            WeeklyCalendarTodoView()
+            WeeklyCalendarSection(navController = navController)
         }
 
         // Main content

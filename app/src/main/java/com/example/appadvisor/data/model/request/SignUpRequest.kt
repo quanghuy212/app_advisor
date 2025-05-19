@@ -1,7 +1,7 @@
 package com.example.appadvisor.data.model.request
 
-import com.example.appadvisor.data.model.Department
-import com.example.appadvisor.data.model.Role
+import com.example.appadvisor.data.model.enums.Department
+import com.example.appadvisor.data.model.enums.Role
 
 data class SignUpRequest(
     var email: String = "",

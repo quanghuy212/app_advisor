@@ -51,8 +51,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
-import com.example.appadvisor.data.model.Department
-import com.example.appadvisor.data.model.Role
+import com.example.appadvisor.data.model.enums.Department
+import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 @Composable
@@ -423,6 +423,6 @@ fun SignUpScreen(
 fun PreviewSignUpScreen() {
     AppAdvisorTheme {
         val navController = rememberNavController()
-        SignUpScreen(modifier = Modifier,navController)
+        SignUpScreen(modifier = Modifier, navController = navController)
     }
 }
