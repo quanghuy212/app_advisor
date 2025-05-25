@@ -7,9 +7,11 @@ import com.example.appadvisor.data.network.AuthApiService
 import com.example.appadvisor.data.network.MeetingApiService
 import com.example.appadvisor.data.network.StudentApiService
 import com.example.appadvisor.data.network.TaskApiService
+import com.example.appadvisor.data.network.UserApiService
 import com.example.appadvisor.data.repository.AdvisorRepository
 import com.example.appadvisor.data.repository.MeetingRepository
 import com.example.appadvisor.data.repository.StudentRepository
+import com.example.appadvisor.data.repository.AuthRepository
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -19,6 +21,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.annotation.Signed
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -63,6 +66,20 @@ object AppModule {
         return retrofitWithAuth.create(StudentApiService::class.java)
     }
 
+    // Provides User ApiService
+    @Provides
+    @Singleton
+    fun provideUserApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): UserApiService {
+        return retrofitWithAuth.create(UserApiService::class.java)
+    }
+
+    // Provides User Repository
+    @Provides
+    @Singleton
+    fun provideUserRepository(userApiService: UserApiService): UserRepository {
+        return UserRepository(userApiService)
+    }
+
     // Provides Student Repository
     @Provides
     @Singleton
@@ -88,8 +105,8 @@ object AppModule {
     // Provide User Repository
     @Provides
     @Singleton
-    fun provideUserRepository(authApiService: AuthApiService, tokenManager: TokenManager): UserRepository {
-        return UserRepository(authApiService, tokenManager)
+    fun provideAuthRepository(authApiService: AuthApiService, tokenManager: TokenManager): AuthRepository {
+        return AuthRepository(authApiService, tokenManager)
     }
 
     // Provide Token manager

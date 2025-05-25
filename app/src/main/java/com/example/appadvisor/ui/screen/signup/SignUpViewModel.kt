@@ -4,10 +4,8 @@ import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.appadvisor.data.model.enums.Department
-import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.data.model.request.SignUpRequest
-import com.example.appadvisor.data.repository.UserRepository
+import com.example.appadvisor.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     // Ui state
@@ -76,7 +74,7 @@ class SignUpViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val result = userRepository.signUp(request)
+                val result = authRepository.signUp(request)
 
                 result.fold(
                     onSuccess = {
