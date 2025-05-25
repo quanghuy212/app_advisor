@@ -2,8 +2,14 @@ package com.example.appadvisor.di
 
 import android.content.Context
 import com.example.appadvisor.data.local.TokenManager
+import com.example.appadvisor.data.network.AdvisorApiService
 import com.example.appadvisor.data.network.AuthApiService
+import com.example.appadvisor.data.network.MeetingApiService
+import com.example.appadvisor.data.network.StudentApiService
 import com.example.appadvisor.data.network.TaskApiService
+import com.example.appadvisor.data.repository.AdvisorRepository
+import com.example.appadvisor.data.repository.MeetingRepository
+import com.example.appadvisor.data.repository.StudentRepository
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -22,18 +28,6 @@ object AppModule {
 
     private const val BASE_URL = "http://10.0.2.2:8080/"
 
-/*    // Provide Retrofit
-    @Provides
-    @Singleton
-    fun provideRetrofit(): Retrofit {
-
-        // Run AVD url = "http://10.0.2.2:8080/"
-        return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8080/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }*/
-
     // Provide Auth ApiService
     @Provides
     @Singleton
@@ -47,6 +41,49 @@ object AppModule {
     fun provideTaskApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): TaskApiService {
         return retrofitWithAuth.create(TaskApiService::class.java)
     }
+
+    // Provides Meeting ApiService
+    @Provides
+    @Singleton
+    fun provideMeetingApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): MeetingApiService {
+        return retrofitWithAuth.create(MeetingApiService::class.java)
+    }
+
+    // Provides Advisor ApiService
+    @Provides
+    @Singleton
+    fun provideAdvisorApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): AdvisorApiService {
+        return retrofitWithAuth.create(AdvisorApiService::class.java)
+    }
+
+    // Provides Student ApiService
+    @Provides
+    @Singleton
+    fun provideStudentApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): StudentApiService {
+        return retrofitWithAuth.create(StudentApiService::class.java)
+    }
+
+    // Provides Student Repository
+    @Provides
+    @Singleton
+    fun provideStudentRepository(studentApiService: StudentApiService): StudentRepository {
+        return StudentRepository(studentApiService)
+    }
+
+    // Provides Advisor Repository
+    @Provides
+    @Singleton
+    fun provideAdvisorRepository(advisorApiService: AdvisorApiService): AdvisorRepository {
+        return AdvisorRepository(advisorApiService)
+    }
+
+    // Provides Meeting Repository
+    @Provides
+    @Singleton
+    fun provideMeetingRepository(meetingApiService: MeetingApiService) : MeetingRepository {
+        return MeetingRepository(meetingApiService)
+    }
+
 
     // Provide User Repository
     @Provides

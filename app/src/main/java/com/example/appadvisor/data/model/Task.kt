@@ -1,4 +1,4 @@
-package com.example.appadvisor.data
+package com.example.appadvisor.data.model
 
 import com.example.appadvisor.data.model.enums.Status
 import java.time.LocalDate

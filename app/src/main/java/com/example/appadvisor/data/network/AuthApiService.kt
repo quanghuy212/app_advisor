@@ -11,7 +11,7 @@ import retrofit2.http.POST
 interface AuthApiService {
 
     // Sign up - METHOD: POST - ENTRY POINT: /api/auth/signup
-    @POST("/api/auth/signup")
+    @POST("/api/auth/signup/student")
     suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<ApiResponse>
 
     // Login - METHOD: POST - ENTRY POINT: /api/auth/login

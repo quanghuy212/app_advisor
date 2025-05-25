@@ -1,6 +1,6 @@
 package com.example.appadvisor.data.network
 
-import com.example.appadvisor.data.Task
+import com.example.appadvisor.data.model.Task
 import com.example.appadvisor.data.model.request.TaskRequest
 import com.example.appadvisor.data.model.response.ApiResponse
 import retrofit2.Response
@@ -28,6 +28,5 @@ interface TaskApiService {
     suspend fun deleteTask(
         @Path("id") id: Long
     ): Response<Unit>
-
-
 }
+

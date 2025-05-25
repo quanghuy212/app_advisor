@@ -7,6 +7,7 @@ data class SignUpRequest(
     var email: String = "",
     var name: String = "",
     var password: String = "",
-    var role: Role = Role.STUDENT,
-    var department: Department? = null
+    var phoneNumber: String = "",
+    var major: String = "",
+    var classroom: String = ""
 )

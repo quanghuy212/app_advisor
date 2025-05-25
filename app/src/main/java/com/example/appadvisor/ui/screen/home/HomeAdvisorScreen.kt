@@ -47,6 +47,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
 import com.example.appadvisor.data.FeatureCard
 import com.example.appadvisor.data.advisorFeatureCard
+import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarSection
 
 
@@ -160,17 +161,17 @@ fun HomeAdvisorScreen(
                             .clickable {
                                 when (card.title) {
                                     "Calendar" -> {
-                                        navController.navigate("calendar")
+                                        navController.navigate(AppScreens.Calendar.route)
                                         //AddTaskBottomSheet(onSave = {}, onDismiss = {})
                                     }
                                     "Form" -> {
-                                        navController.navigate("form")
+                                        navController.navigate(AppScreens.Form.route)
                                     }
                                     "Tạo lịch hẹn" -> {
-                                        navController.navigate("create_appointment")
+                                        navController.navigate(AppScreens.Meeting.route)
                                     }
                                     "Settings" -> {
-                                        navController.navigate("settings")
+                                        navController.navigate(AppScreens.Settings.route)
                                     }
                                 }
                             },

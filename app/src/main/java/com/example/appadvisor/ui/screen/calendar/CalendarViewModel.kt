@@ -3,8 +3,8 @@ package com.example.appadvisor.ui.screen.calendar
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.appadvisor.data.DailyTasks
-import com.example.appadvisor.data.Task
+import com.example.appadvisor.data.model.DailyTasks
+import com.example.appadvisor.data.model.Task
 import com.example.appadvisor.data.model.enums.Status
 import com.example.appadvisor.data.model.request.TaskRequest
 import com.example.appadvisor.data.repository.TaskRepository
