@@ -1,12 +1,17 @@
 package com.example.appadvisor.ui.screen.appointment
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.appadvisor.data.local.TokenManager
 import com.example.appadvisor.data.model.Meeting
 import com.example.appadvisor.data.model.ParticipantInfo
 import com.example.appadvisor.data.model.enums.MeetingStatus
 import com.example.appadvisor.data.model.enums.ParticipantStatus
+import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.data.model.request.MeetingRequest
 import com.example.appadvisor.data.model.request.UpdateMeetingRequest
 import com.example.appadvisor.data.model.response.MeetingResponse
@@ -29,7 +34,8 @@ import javax.inject.Inject
 class MeetingViewModel @Inject constructor(
     private val meetingRepository: MeetingRepository,
     private val advisorRepository: AdvisorRepository,
-    private val studentRepository: StudentRepository
+    private val studentRepository: StudentRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     // Giả lập dữ liệu ban đầu, bạn sẽ load từ API sau
@@ -54,6 +60,19 @@ class MeetingViewModel @Inject constructor(
     val showEditDialog : StateFlow<Boolean> = _isShowEditDialog
 
     var currentEditingMeetingId: Long? = null
+
+    var role by mutableStateOf<Role?>(null)
+        private set
+
+    init {
+        getRole()
+    }
+
+    private fun getRole() {
+        viewModelScope.launch {
+            role = tokenManager.getRole()?.let { Role.valueOf(it) }
+        }
+    }
 
     fun openEditDialog() {
         _isShowEditDialog.value = true

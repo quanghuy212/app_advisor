@@ -32,7 +32,6 @@ import java.time.format.DateTimeFormatter
 fun MeetingScreen(
     navController: NavController,
     meetingViewModel: MeetingViewModel = hiltViewModel(),
-    role: Role,
     onNavigateToDetail: (Meeting) -> Unit = {},
     onNavigateToCreate: () -> Unit = {},
     onNavigateBack: () -> Unit = {}
@@ -40,6 +39,8 @@ fun MeetingScreen(
     val uiState by meetingViewModel.uiState.collectAsState()
     //val userRole by meetingViewModel.userRole.collectAsState()
     val filteredAppointments = meetingViewModel.getFilteredAppointments()
+
+    val role = meetingViewModel.role
 
     LaunchedEffect(uiState.meetings) {
         meetingViewModel.loadMeetings()

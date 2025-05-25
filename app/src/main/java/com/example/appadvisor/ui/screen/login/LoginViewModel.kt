@@ -5,7 +5,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appadvisor.data.model.request.LoginRequest
-import com.example.appadvisor.data.repository.UserRepository
+import com.example.appadvisor.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     // Ui
@@ -72,7 +72,7 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val result = userRepository.login(userLogin)
+                val result = authRepository.login(userLogin)
 
                 result.fold(
                     onSuccess = {

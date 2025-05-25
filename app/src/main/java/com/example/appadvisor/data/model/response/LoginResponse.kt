@@ -4,5 +4,6 @@ data class LoginResponse(
     val success: Boolean,
     val message: String,
     val role: String? = null,
-    val token: String? = null
+    val token: String? = null,
+    val name: String? = null
 )

@@ -31,7 +31,8 @@ import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarSection
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeStudentScreen(
-    navController: NavController
+    navController: NavController,
+    name: String
 ) {
     var isCalendarShown by remember {
         mutableStateOf(false)
@@ -67,11 +68,10 @@ fun HomeStudentScreen(
             )
             Column {
                 Text(
-                    text = "Đinh Quang Huy | CT050225",
+                    text = name,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
-                Text(text = "Khoa công nghệ thông tin", fontStyle = FontStyle.Italic)
             }
 
             // Move Icon button to end of row
@@ -186,5 +186,5 @@ fun HomeStudentScreen(
 @Composable
 fun PreviewHomeStudentScreen() {
     val navController = rememberNavController()
-    HomeStudentScreen(navController)
+    HomeStudentScreen(navController, "Quang Huy")
 }

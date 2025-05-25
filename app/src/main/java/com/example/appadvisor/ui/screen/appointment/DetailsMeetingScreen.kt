@@ -45,7 +45,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun DetailsMeetingScreen(
     meetingId: Long,
-    role: Role,
     viewModel: MeetingViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {}
 ) {
@@ -58,6 +57,8 @@ fun DetailsMeetingScreen(
     val selfParticipantInfo = meeting?.participants?.find { it.studentId == studentId }
     val selfResponse = selfParticipantInfo?.status
     Log.d("Details Meeting Screen","Self Participant Info: $selfParticipantInfo")
+
+    val role = viewModel.role
 
     LaunchedEffect(Unit) {
         if (uiState.meetings.isEmpty()) {
