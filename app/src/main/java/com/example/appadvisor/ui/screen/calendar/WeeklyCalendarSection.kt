@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.appadvisor.data.DailyTasks
+import com.example.appadvisor.data.model.DailyTasks
 import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 import com.kizitonwose.calendar.compose.WeekCalendar

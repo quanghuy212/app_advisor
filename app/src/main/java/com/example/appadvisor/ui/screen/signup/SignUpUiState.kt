@@ -9,8 +9,9 @@ data class SignUpUiState(
     var name: String = "",
     var password: String = "",
     var confirmPassword: String = "",
-    var role: Role = Role.STUDENT,
-    var department: Department = Department.ATTT,
+    var major: String = "",
+    var classroom: String = "",
+    var phoneNumber: String = "",
 
     var isLoading: Boolean = false,
     var isSuccess: Boolean = false

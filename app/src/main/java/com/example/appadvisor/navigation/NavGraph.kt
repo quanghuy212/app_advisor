@@ -15,6 +15,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.appadvisor.data.local.TokenManager
 import com.example.appadvisor.data.model.enums.Role
+import com.example.appadvisor.ui.screen.appointment.AddMeetingScreen
+import com.example.appadvisor.ui.screen.appointment.DetailsMeetingScreen
+import com.example.appadvisor.ui.screen.appointment.MeetingScreen
 import com.example.appadvisor.ui.screen.calendar.DetailsTaskScreen
 import com.example.appadvisor.ui.screen.calendar.MonthlyCalendarScreen
 import com.example.appadvisor.ui.screen.signup.SignUpScreen
@@ -67,6 +70,33 @@ fun AppNavGraph(
                 })
             } ?: Log.e("NavGraph", "taskId is null or invalid in route params")
         }
+
+        // Meeting
+        composable(route = AppScreens.Meeting.route) {
+            MeetingScreen(
+                navController = navController,
+                role = role!!,
+                onNavigateToCreate = { navController.navigate(AppScreens.CreateMeeting.route) }
+            )
+        }
+        // Add Meeting
+        composable(route = AppScreens.CreateMeeting.route) {
+            AddMeetingScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+        // Details Meeting
+        composable(
+            route = AppScreens.MeetingDetails.route,
+            arguments = listOf(navArgument("meetingId") {type = NavType.LongType})
+        ) { backStackEntry ->
+            val meetingId = backStackEntry.arguments?.getLong("meetingId")
+            Log.d("NavGraph", "Navigating to DetailsMeeting with meetingId = $meetingId")
+
+            meetingId?.let {
+                DetailsMeetingScreen(meetingId = meetingId, role = role!!)
+            }
+        }
     }
 }
 
@@ -77,8 +107,6 @@ fun AppNavGraph(
         //composable("info") { InfoScreen() }
         composable("barcode") { BarcodeGeneratorScreen(navController = navController) }
 
-        // Home screen
-        composable("calendar") { CalendarTodoScreen() }
         //composable("form") { OnlineForm() }
         composable("results") { StudentGradeScreen(navController = navController,student = student) }
         composable("settings") { SettingsScreen() }

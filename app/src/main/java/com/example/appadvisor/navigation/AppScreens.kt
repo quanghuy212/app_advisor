@@ -21,6 +21,11 @@ sealed class AppScreens(val route: String) {
     data object Settings: AppScreens(route = "settings")
 
     data object ScoreDetails: AppScreens(route = "score_details")
-    data object CreateAppointment: AppScreens(route = "create_appointment")
+
+    data object Meeting: AppScreens(route = "meeting")
+    data object MeetingDetails: AppScreens(route = "meetingDetails/{meetingId}") {
+        fun withId(id: Long) = "meetingDetails/$id"
+    }
+    data object CreateMeeting: AppScreens(route = "create_meeting")
 
 }

@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,7 +54,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
 import com.example.appadvisor.data.model.enums.Department
 import com.example.appadvisor.data.model.enums.Role
+import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
+import java.util.Locale
 
 @Composable
 fun SignUpScreen(
@@ -74,11 +77,7 @@ fun SignUpScreen(
         mutableStateOf(false)
     }
 
-    var isRoleMenuExpanded by remember {
-        mutableStateOf(false)
-    }
-
-    var isDepartmentMenuExpanded by remember {
+    var isMajorMenuExpanded by remember {
         mutableStateOf(false)
     }
 
@@ -102,6 +101,7 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(36.dp))
 
+            // Full name
             OutlinedTextField(
                 value = state.value.name,
                 onValueChange = viewModel::onNameChange,
@@ -141,6 +141,7 @@ fun SignUpScreen(
                 )
             )
 
+            // Email
             OutlinedTextField(
                 value = state.value.email,
                 onValueChange = viewModel::onEmailChange,
@@ -177,121 +178,97 @@ fun SignUpScreen(
                 )
             )
 
+            // Phone number
+            OutlinedTextField(
+                value = state.value.phoneNumber,
+                onValueChange = viewModel::onPhoneNumberChange,
+                isError = errors.value.containsKey("phoneNumber"),
+                label = { Text("Phone Number") },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Phone, contentDescription = null)
+                },
+                modifier = modifier
+                    .padding(4.dp)
+                    .fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Next
+                ),
+                supportingText = {
+                    errors.value["phoneNumber"]?.let { Text(it, color = Color.Red) }
+                }
+            )
+
+            // Classroom
+            OutlinedTextField(
+                value = state.value.classroom.uppercase(),
+                onValueChange = viewModel::onClassChange,
+                isError = errors.value.containsKey("classroom"),
+                label = { Text("Classroom") },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+                },
+                modifier = modifier
+                    .padding(4.dp)
+                    .fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                supportingText = {
+                    errors.value["classroom"]?.let { Text(it, color = Color.Red) }
+                }
+            )
+
+            // Major
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    value = state.value.role.name,
-                    onValueChange = {},//viewModel::onRoleChange,
+                    value = state.value.major,
+                    onValueChange = {},
                     readOnly = true,
-                    isError = errors.value.containsValue("role"),
-                    label = {
-                        Text(text = "Role")
-                    },
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = null
-                        )
-                    },
+                    isError = errors.value.containsValue("major"),
+                    label = { Text("Major") },
                     trailingIcon = {
-                        IconButton(
-                            onClick = { isRoleMenuExpanded = true }
-                        ) {
+                        IconButton(onClick = { isMajorMenuExpanded = !isMajorMenuExpanded }) {
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = null
+                                contentDescription = "Select Major"
                             )
                         }
                     },
+                    modifier = Modifier.fillMaxWidth(),
                     supportingText = {
-                        //errors.value["role"]?.let { Text(it, color = Color.Red) }
+                        errors.value["major"]?.let { Text(it, color = Color.Red) }
                     },
-                    modifier = modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.medium
                 )
 
                 DropdownMenu(
-                    expanded = isRoleMenuExpanded,
-                    onDismissRequest = { isRoleMenuExpanded = false },
-                    modifier = Modifier.fillMaxWidth(0.75f)
+                    expanded = isMajorMenuExpanded,
+                    onDismissRequest = { isMajorMenuExpanded = false }
                 ) {
-                    roles.forEach { roleOption ->
+                    listOf("CNTT", "ATTT", "DTVT").forEach { majorOption ->
                         DropdownMenuItem(
-                            text = {
-                                Text(text = roleOption.name)
-                            },
+                            text = { Text(majorOption) },
                             onClick = {
-                                viewModel.onRoleChange(roleOption)
-                                isRoleMenuExpanded = false
+                                viewModel.onMajorChange(majorOption)
+                                isMajorMenuExpanded = false
                             }
                         )
                     }
                 }
             }
 
-            if (state.value.role == Role.ADVISOR) {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OutlinedTextField(
-                        value = state.value.department.name,
-                        onValueChange = {},//viewModel::onDepartmentChange,
-                        readOnly = true,
-                        isError = errors.value.containsValue("department"),
-                        label = {
-                            Text(text = "Department")
-                        },
-                        singleLine = true,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = null
-                            )
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = { isDepartmentMenuExpanded = true }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.KeyboardArrowDown,
-                                    contentDescription = null
-                                )
-                            }
-                        },
-                        supportingText = {
-                            errors.value["department"]?.let { Text(it, color = Color.Red) }
-                        },
-                        modifier = modifier
-                            .padding(4.dp)
-                            .fillMaxWidth(),
-                        shape = MaterialTheme.shapes.medium,
-                    )
 
-                    DropdownMenu(
-                        expanded = isDepartmentMenuExpanded,
-                        onDismissRequest = { isDepartmentMenuExpanded = false },
-                        modifier = Modifier.fillMaxWidth(0.75f)
-                    ) {
-                        departments.forEach { roleOption ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = roleOption.name)
-                                },
-                                onClick = {
-                                    viewModel.onDepartmentChange(value = roleOption)
-                                    isDepartmentMenuExpanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
-            
+            // Password
             OutlinedTextField(
                 value = state.value.password,
                 onValueChange = viewModel::onPasswordChange,
@@ -333,6 +310,7 @@ fun SignUpScreen(
                 )
             )
 
+            //Confirm password
             OutlinedTextField(
                 value = state.value.confirmPassword,
                 onValueChange = viewModel::onConfirmPasswordChange,
@@ -390,7 +368,7 @@ fun SignUpScreen(
             // Navigate login when isSuccess = true
             LaunchedEffect(key1 = state.value.isSuccess) {
                 if (state.value.isSuccess) {
-                    navController.navigate("login")
+                    navController.navigate(AppScreens.Login.route)
                     viewModel.reset()
                 }
             }
@@ -410,7 +388,7 @@ fun SignUpScreen(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable {
                         // Navigate to Login Screen
-                        navController.navigate("login")
+                        navController.navigate(AppScreens.Login.route)
                     }
                 )
             }

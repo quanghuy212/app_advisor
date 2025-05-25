@@ -1,7 +1,6 @@
 package com.example.appadvisor.data.repository
 
-import com.example.appadvisor.data.DailyTasks
-import com.example.appadvisor.data.Task
+import com.example.appadvisor.data.model.Task
 import com.example.appadvisor.data.model.request.TaskRequest
 import com.example.appadvisor.data.model.response.ApiResponse
 import com.example.appadvisor.data.network.TaskApiService

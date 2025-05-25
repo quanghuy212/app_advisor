@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -206,7 +207,7 @@ fun TimePickerField(
         trailingIcon = {
             IconButton(onClick = { timePickerDialog.show() }) {
                 Icon(
-                    imageVector = Icons.Default.Settings,
+                    imageVector = Icons.Default.Edit,
                     contentDescription = "Chọn giờ",
                     tint = MaterialTheme.colorScheme.primary
                 )

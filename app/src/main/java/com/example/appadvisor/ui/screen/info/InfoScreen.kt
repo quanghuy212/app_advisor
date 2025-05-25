@@ -1,4 +1,4 @@
-/*
+
 package com.example.appadvisor.ui.screen.info
 
 import androidx.compose.foundation.layout.*
@@ -15,10 +15,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.appadvisor.data.model.PersonInfo
 import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
+data class PersonInfo(
+    val name: String = "Đinh Quang Huy",
+    val phone: String = "0845899688",
+    val role: Role = Role.STUDENT,
+    val email: String = "ct050225@actvn.edu.vn",
+    val major: String = "Công nghệ thông tin",
+)
+/*
 @Composable
 fun InfoScreen(
     personInfo: PersonInfo
@@ -66,9 +73,7 @@ fun InfoScreen(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    if (personInfo.role == UserRole.STUDENT &&
-                        (personInfo.batch != null || personInfo.major != null)
-                    ) {
+                    if (personInfo.role == Role.STUDENT) {
                         Text(
                             text = "Thông tin học tập",
                             style = MaterialTheme.typography.titleMedium,
@@ -82,38 +87,11 @@ fun InfoScreen(
                                 value = personInfo.major
                             )
                         }
-
-                        personInfo.batch?.let {
-                            InformationRow(
-                                iconId = R.drawable.desktop_computer,
-                                label = "Lớp",
-                                value = personInfo.batch
-                            )
-                        }
-
-                        HorizontalDivider(thickness = 2.dp)
-                    } else if (personInfo.role == UserRole.ADVISOR && personInfo.department != null) {
-                        // Contact information section
-                        Text(
-                            text = "Thông tin liên lạc",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        InformationRow(
-                            iconId = R.drawable.baseline_star_24,
-                            label = "Khoa",
-                            value = personInfo.department
-                        )
+                    }
 
                         HorizontalDivider(thickness = 2.dp)
                     }
 
-                    InformationRow(
-                        iconId = R.drawable.calendar,
-                        label = "Ngày sinh",
-                        value = personInfo.birthday
-                    )
                     InformationRow(
                         iconId = R.drawable.baseline_call_24,
                         label = "Số điện thoại",
@@ -127,7 +105,6 @@ fun InfoScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
 
             Box(
                 modifier = Modifier
@@ -150,7 +127,7 @@ fun InfoScreen(
             }
         }
     }
-}
+
 
 @Composable
 fun InformationRow(
@@ -181,37 +158,152 @@ fun InformationRow(
         }
     }
 }
-
-@Preview(showBackground = true)
+*/
 @Composable
-fun PreviewInfoStudent() {
-    val personInfo = PersonInfo(
-        name = "Đinh Quang Huy",
-        birthday = "02/12/2002",
-        phone = "0845899688",
-        role = UserRole.STUDENT,
-        email = "ct050225@actvn.edu.vn",
-        major = "Công nghệ thông tin",
-        batch = "CT5B"
-    )
-    AppAdvisorTheme {
-        InfoScreen(personInfo = personInfo)
+fun InfoScreen(
+    personInfo: PersonInfo
+) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+        ) {
+            // Header with profile picture
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    modifier = Modifier.size(120.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            // Name
+            Text(
+                text = personInfo.name,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 12.dp, bottom = 16.dp)
+            )
+
+            // Card: Info
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    if (personInfo.role == Role.STUDENT) {
+                        Text(
+                            text = "Thông tin học tập",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        InformationRow(
+                            iconId = R.drawable.baseline_star_24,
+                            label = "Chuyên ngành",
+                            value = personInfo.major
+                        )
+
+                        HorizontalDivider(thickness = 2.dp)
+                    }
+
+                    InformationRow(
+                        iconId = R.drawable.baseline_call_24,
+                        label = "Số điện thoại",
+                        value = personInfo.phone
+                    )
+                    InformationRow(
+                        iconId = R.drawable.baseline_email_24,
+                        label = "Email",
+                        value = personInfo.email
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f)) // Đẩy button xuống đáy màn hình
+
+            // Logout Button
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(
+                    onClick = { /* TODO */ },
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f)
+                        .height(50.dp)
+                ) {
+                    Text(
+                        text = "Đăng xuất",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun InformationRow(
+    iconId: Int,
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp), // chỉnh nhẹ lề trái nếu muốn
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewInfoAdvisor() {
+fun PreviewInfoStudent() {
     AppAdvisorTheme {
-        InfoScreen(
-            personInfo = PersonInfo(
-                name = "Nguyễn Văn A",
-                birthday = "10/10/1980",
-                phone = "0123456789",
-                role = UserRole.ADVISOR,
-                email = "advisor@actvn.edu.vn",
-                department = "An toàn thông tin"
-            )
-        )
+        InfoScreen(personInfo = PersonInfo())
     }
-}*/
+}
+

@@ -44,43 +44,39 @@ class SignUpViewModel @Inject constructor(
         _uiState.update { it.copy(confirmPassword = value) }
     }
 
-    fun onRoleChange(value: Role) {
-        _uiState.update { it.copy(role = value) }
+    fun onPhoneNumberChange(value: String) {
+        _uiState.update { it.copy(phoneNumber = value) }
     }
 
-    fun onDepartmentChange(value: Department) {
-        _uiState.update { it.copy(department = value) }
+    fun onClassChange(value: String) {
+        _uiState.update { it.copy(classroom = value) }
+    }
+
+    fun onMajorChange(value: String) {
+        _uiState.update { it.copy(major = value) }
     }
 
     fun signUp() {
+
+        // Validate form
         if (!validate()) return
-        //userSignUp(role)
 
         val state = uiState.value
 
-        val user = if (state.role == Role.STUDENT) {
-            // Student
-            SignUpRequest(
-                email = state.email,
-                name = state.name,
-                role = state.role,
-                password = state.password,
-                department = null
-            )
-        } else {
-            // Advisor
-            SignUpRequest(
-                email = state.email,
-                name = state.name,
-                role = state.role,
-                password = state.password,
-                department = state.department
-            )
-        }
+        // Create Sign Up Request
+        val request = SignUpRequest(
+            email = state.email,
+            name = state.name,
+            password = state.password,
+            phoneNumber = state.phoneNumber,
+            major = state.major,
+            classroom = state.classroom
+        )
+
 
         viewModelScope.launch {
             try {
-                val result = userRepository.signUp(user)
+                val result = userRepository.signUp(request)
 
                 result.fold(
                     onSuccess = {
@@ -123,6 +119,23 @@ class SignUpViewModel @Inject constructor(
             errors["email"] = "Email không hợp lệ"
         }
 
+        // Phone validate (bắt đầu bằng 0, 10 số)
+        if (!state.phoneNumber.matches(Regex("^0\\d{9}\$"))) {
+            errors["phoneNumber"] = "Số điện thoại không hợp lệ"
+        }
+
+        // Classroom validate
+        if (state.classroom.isBlank()) {
+            errors["classroom"] = "Vui lòng nhập mã lớp"
+        } else if (!state.classroom.matches(Regex("^(ct|dt|at)[0-9]{1,2}[A-Z]\$\n"))) {
+            errors["classroom"] = "Mã lớp không đúng định dạng (CT5B hoặc AT20B)"
+        }
+
+        // Major validate
+        if (state.major.isBlank()) {
+            errors["major"] = "Vui lòng chọn chuyên ngành"
+        }
+
         // Password validate
         if (state.password.length < 6) {
             errors["password"] = "Độ dài mật khẩu ít nhất 6 kí tự"
@@ -137,6 +150,7 @@ class SignUpViewModel @Inject constructor(
 
         return errors.isEmpty()
     }
+
 
 
 }

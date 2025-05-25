@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
 import com.example.appadvisor.data.FeatureCard
 import com.example.appadvisor.data.studentFeatureCards
+import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.screen.calendar.WeeklyCalendarSection
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,10 +137,11 @@ fun HomeStudentScreen(
                             .fillMaxWidth()
                             .clickable {
                                 when (card.title) {
-                                    "Calendar" -> navController.navigate("calendar")
-                                    "Form" -> navController.navigate("form")
-                                    "Results" -> navController.navigate("results")
-                                    "Settings" -> navController.navigate("settings")
+                                    "Calendar" -> navController.navigate(AppScreens.Calendar.route)
+                                    "Form" -> navController.navigate(AppScreens.Form.route)
+                                    "Results" -> navController.navigate(AppScreens.ScoreDetails.route)
+                                    "Settings" -> navController.navigate(AppScreens.Settings.route)
+                                    "Meeting" -> navController.navigate(AppScreens.Meeting.route)
                                 }
                             },
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
