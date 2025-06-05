@@ -153,7 +153,7 @@ class CalendarViewModel @Inject constructor(
     }
 
 
-    fun toggleTaskCompletion(task: Task, date: LocalDate) {
+    fun toggleTaskCompletion(task: Task) {
         viewModelScope.launch {
             try {
                 val newStatus = if (task.status == Status.DONE) Status.PLANNED else Status.DONE
@@ -248,7 +248,6 @@ class CalendarViewModel @Inject constructor(
                         Log.e("Calendar ViewModel",it.message.toString())
                     }
                 )
-
             } catch (e: Exception) {
                 Log.e("CalendarViewModel", "Error adding task", e)
             }

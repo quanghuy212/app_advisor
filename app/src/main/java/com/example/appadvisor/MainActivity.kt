@@ -1,9 +1,11 @@
 package com.example.appadvisor
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.imePadding
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var tokenManager: TokenManager
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -58,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
                 ) { paddingValues ->
                     Box(modifier = Modifier.padding(paddingValues)) {
-                        AppNavGraph(navController,tokenManager)
+                        AppNavGraph(navController)
                     }
                 }
                 //BottomSheetTestScreen()

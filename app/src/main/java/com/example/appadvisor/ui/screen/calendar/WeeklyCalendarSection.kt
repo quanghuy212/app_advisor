@@ -79,7 +79,7 @@ fun WeeklyCalendarSection(
             selectedDate = selectedDate,
             dailyTasksList = dailyTasksList,
             onTaskToggle = { task, date ->
-                calendarViewModel.toggleTaskCompletion(task, date)
+                calendarViewModel.toggleTaskCompletion(task)
             },
             onAddButtonClick = {
                 calendarViewModel.toggleAddTaskBottomSheet()

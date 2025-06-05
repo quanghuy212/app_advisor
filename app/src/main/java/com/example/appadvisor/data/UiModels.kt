@@ -45,7 +45,7 @@ val advisorFeatureCard = listOf(
         "Schedule your day"
     ),
     FeatureCard(
-        "QL Sinh Viên",
+        "Student Manage",
         R.drawable.baseline_view_list_24,
         "Thông tin sinh viên quản lý"
     ),

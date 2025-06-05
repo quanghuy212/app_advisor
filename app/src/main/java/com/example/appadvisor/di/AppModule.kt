@@ -2,8 +2,11 @@ package com.example.appadvisor.di
 
 import android.content.Context
 import com.example.appadvisor.data.local.TokenManager
+import com.example.appadvisor.data.model.Document
 import com.example.appadvisor.data.network.AdvisorApiService
 import com.example.appadvisor.data.network.AuthApiService
+import com.example.appadvisor.data.network.DocumentApiService
+import com.example.appadvisor.data.network.InfoApiService
 import com.example.appadvisor.data.network.MeetingApiService
 import com.example.appadvisor.data.network.StudentApiService
 import com.example.appadvisor.data.network.TaskApiService
@@ -12,6 +15,8 @@ import com.example.appadvisor.data.repository.AdvisorRepository
 import com.example.appadvisor.data.repository.MeetingRepository
 import com.example.appadvisor.data.repository.StudentRepository
 import com.example.appadvisor.data.repository.AuthRepository
+import com.example.appadvisor.data.repository.DocumentRepository
+import com.example.appadvisor.data.repository.InfoRepository
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -71,6 +76,33 @@ object AppModule {
     @Singleton
     fun provideUserApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): UserApiService {
         return retrofitWithAuth.create(UserApiService::class.java)
+    }
+
+    // Provides Info ApiService
+    @Provides
+    @Singleton
+    fun provideInfoApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): InfoApiService {
+        return retrofitWithAuth.create(InfoApiService::class.java)
+    }
+
+    // Provides Document ApiService
+    @Provides
+    @Singleton
+    fun provideDocumentApiService(@Named("no-auth-retrofit") retrofitWithoutAuth: Retrofit): DocumentApiService {
+        return retrofitWithoutAuth.create(DocumentApiService::class.java)
+    }
+
+    // Provides Document Repository
+    @Provides
+    @Singleton
+    fun provideDocumentRepository(documentApiService: DocumentApiService): DocumentRepository {
+        return DocumentRepository(documentApiService)
+    }
+    // Provides Info Repository
+    @Provides
+    @Singleton
+    fun provideInfoRepository(infoApiService: InfoApiService): InfoRepository {
+        return InfoRepository(infoApiService)
     }
 
     // Provides User Repository

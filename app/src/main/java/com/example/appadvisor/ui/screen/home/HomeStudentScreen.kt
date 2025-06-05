@@ -139,7 +139,7 @@ fun HomeStudentScreen(
                                 when (card.title) {
                                     "Calendar" -> navController.navigate(AppScreens.Calendar.route)
                                     "Form" -> navController.navigate(AppScreens.Form.route)
-                                    "Results" -> navController.navigate(AppScreens.ScoreDetails.route)
+                                    "Results" -> navController.navigate(AppScreens.Result.route)
                                     "Settings" -> navController.navigate(AppScreens.Settings.route)
                                     "Meeting" -> navController.navigate(AppScreens.Meeting.route)
                                 }

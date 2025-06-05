@@ -1,6 +1,5 @@
 package com.example.appadvisor.ui.screen.appointment
 
-import com.example.appadvisor.data.Student
 import com.example.appadvisor.data.model.enums.MeetingStatus
 import com.example.appadvisor.data.model.response.StudentResponseDTO
 import java.time.LocalDate

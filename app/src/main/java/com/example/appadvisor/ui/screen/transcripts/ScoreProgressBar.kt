@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun GPAProgressBar(
-    gpaValue: Float,
-    maxGPA: Float = 4.0f,
+    gpaValue: Double,
+    maxGPA: Double = 4.0,
     canvasSize: Dp = 200.dp,
     strokeWidth: Float = 75f
 ) {
@@ -98,5 +98,5 @@ fun GPAProgressBar(
 @Preview(showBackground = true)
 @Composable
 fun GPAPreview() {
-    GPAProgressBar(gpaValue = 1.4f)
+    GPAProgressBar(gpaValue = 2.0)
 }

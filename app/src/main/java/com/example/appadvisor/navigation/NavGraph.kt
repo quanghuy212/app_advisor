@@ -1,28 +1,35 @@
 package com.example.appadvisor.navigation
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.appadvisor.data.local.TokenManager
 import com.example.appadvisor.ui.screen.appointment.AddMeetingScreen
 import com.example.appadvisor.ui.screen.appointment.DetailsMeetingScreen
 import com.example.appadvisor.ui.screen.appointment.MeetingScreen
 import com.example.appadvisor.ui.screen.barcode.BarcodeGeneratorScreen
 import com.example.appadvisor.ui.screen.calendar.DetailsTaskScreen
 import com.example.appadvisor.ui.screen.calendar.MonthlyCalendarScreen
+import com.example.appadvisor.ui.screen.form.DocumentsScreen
 import com.example.appadvisor.ui.screen.home.HomeScreen
+import com.example.appadvisor.ui.screen.info.InfoScreen
 import com.example.appadvisor.ui.screen.login.LoginScreen
 import com.example.appadvisor.ui.screen.signup.SignUpScreen
+import com.example.appadvisor.ui.screen.student_mng.DetailsStudentManage
+import com.example.appadvisor.ui.screen.student_mng.StudentListScreen
+import com.example.appadvisor.ui.screen.transcripts.StudentGradeDetailScreen
+import com.example.appadvisor.ui.screen.transcripts.StudentGradeScreen
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun AppNavGraph(
-    navController: NavHostController,
-    tokenManager: TokenManager
+    navController: NavHostController
 ) {
 
     NavHost(navController = navController,
@@ -85,6 +92,42 @@ fun AppNavGraph(
                 DetailsMeetingScreen(meetingId = meetingId)
             }
         }
+
+        // Form
+        composable(AppScreens.Form.route) {
+            DocumentsScreen(navController, onDocumentClick = {})
+        }
+
+        // Info
+        composable(AppScreens.Info.route) {
+            InfoScreen()
+        }
+
+        // Result
+        composable(AppScreens.Result.route) {
+            StudentGradeScreen(navController)
+        }
+
+        composable(AppScreens.ScoreDetails.route) {
+            StudentGradeDetailScreen(navController)
+        }
+
+        composable(AppScreens.StudentManage.route) {
+            StudentListScreen(navController)
+        }
+
+        composable(
+            AppScreens.ScoreDetailsByAdvisor.route,
+            arguments = listOf(navArgument("studentId") {type = NavType.StringType})
+        ) { backStackEntry ->
+            val studentId = backStackEntry.arguments?.getString("studentId")
+            Log.d("NavGraph", "Navigating to Detail Student Manage = $studentId")
+
+            studentId?.let {
+                DetailsStudentManage(studentId, navController)
+            }
+        }
+
     }
 }
 
@@ -100,4 +143,5 @@ fun AppNavGraph(
         composable("settings") { SettingsScreen() }
 
         composable("score_details") { StudentGradeDetailScreen(student) }
-        composable("create_appointment") { CreateAppointmentScreen() }*/
+        composable("create_appointment") { CreateAppointmentScreen() }
+*/
