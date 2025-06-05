@@ -23,17 +23,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
+import com.example.appadvisor.navigation.AppScreens
 
 @Composable
 fun BottomNavBar(
     navController: NavController
 ) {
     val items = listOf(
-        BottomNavItem("Home", painterResource(id = R.drawable.home_24px)),
-        BottomNavItem("Search", painterResource(id = R.drawable.baseline_search_24)),
+        BottomNavItem("Home", painterResource(id = R.drawable.home_24px), AppScreens.Home.route),
+        BottomNavItem("Search", painterResource(id = R.drawable.baseline_search_24), AppScreens.Search.route),
         BottomNavItem("Barcode", null), // Placeholder for the center button
-        BottomNavItem("Chat", painterResource(id = R.drawable.chat_24px)),
-        BottomNavItem("Info", painterResource(id = R.drawable.info_24px))
+        BottomNavItem("Chat", painterResource(id = R.drawable.chat_24px), AppScreens.Chat.route),
+        BottomNavItem("Info", painterResource(id = R.drawable.info_24px), AppScreens.Info.route)
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -62,7 +63,7 @@ fun BottomNavBar(
                             containerColor = Color(0xFF8E44AD),
                             modifier = Modifier.clip(CircleShape)
                         ) {
-                            Icon(painter = painterResource(id = R.drawable.barcode_24dp), contentDescription = "Add")
+                            Icon(painter = painterResource(id = R.drawable.barcode_24dp), contentDescription = "Barcode")
                         }
                     }
                 } else {

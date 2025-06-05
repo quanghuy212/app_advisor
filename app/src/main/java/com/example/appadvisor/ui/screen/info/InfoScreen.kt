@@ -15,254 +15,175 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.appadvisor.data.model.enums.Role
+import com.example.appadvisor.data.model.response.ProfileResponse
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
-data class PersonInfo(
-    val name: String = "Đinh Quang Huy",
-    val phone: String = "0845899688",
-    val role: Role = Role.STUDENT,
-    val email: String = "ct050225@actvn.edu.vn",
-    val major: String = "Công nghệ thông tin",
-)
-/*
+
+
 @Composable
 fun InfoScreen(
-    personInfo: PersonInfo
+    viewModel: InfoViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Header with profile picture
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(120.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            // Name
-            Text(
-                text = personInfo.name,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            // Detailed information
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    if (personInfo.role == Role.STUDENT) {
-                        Text(
-                            text = "Thông tin học tập",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        personInfo.major?.let {
-                            InformationRow(
-                                iconId = R.drawable.baseline_star_24,
-                                label = "Chuyên ngành",
-                                value = personInfo.major
-                            )
-                        }
-                    }
-
-                        HorizontalDivider(thickness = 2.dp)
-                    }
-
-                    InformationRow(
-                        iconId = R.drawable.baseline_call_24,
-                        label = "Số điện thoại",
-                        value = personInfo.phone
-                    )
-                    InformationRow(
-                        iconId = R.drawable.baseline_email_24,
-                        label = "Email",
-                        value = personInfo.email
-                    )
+        when {
+            uiState.isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
             }
 
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 48.dp), // Add padding at the bottom
-                contentAlignment = Alignment.Center // Center horizontally
-            ) {
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f) // Make button 50% of screen width
-                        .height(48.dp) // Increase button height
-                ) {
-                    Text(
-                        text = "Đăng xuất",
-                        style = MaterialTheme.typography.titleMedium, // Increase text size
-                        modifier = Modifier.padding(4.dp) // Add padding for text
-                    )
+            uiState.isError -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Đã xảy ra lỗi khi tải thông tin.")
                 }
+            }
+
+            uiState.profile != null -> {
+                ProfileContent(profile = uiState.profile!!)
             }
         }
     }
-
+}
 
 @Composable
-fun InformationRow(
-    iconId: Int,
-    label: String,
-    value: String
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+fun ProfileContent(profile: ProfileResponse) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
     ) {
-        Icon(
-            painter = painterResource(iconId),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+        // Avatar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = null,
+                modifier = Modifier.size(120.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        // Name
+        Text(
+            text = profile.fullName,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 12.dp, bottom = 16.dp)
         )
-        Column {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-}
-*/
-@Composable
-fun InfoScreen(
-    personInfo: PersonInfo
-) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+
+        // Card with Info
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp)
         ) {
-            // Header with profile picture
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(120.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                if (profile.major != null) {
+                    Text(
+                        text = "Thông tin học tập",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    HorizontalDivider(thickness = 2.dp)
+
+                    InformationRow(
+                        iconId = R.drawable.baseline_star_24,
+                        label = "Chuyên ngành",
+                        value = when(profile.major) {
+                                "CNTT" -> "Công nghệ thông tin"
+                                "ATTT" -> "An toàn thông tin"
+                                "DTVT" -> "Điện tử viễn thông"
+                                else -> "Not defined"
+                            }
+                    )
+                }
+
+                if (profile.department != null) {
+                    Text(
+                        text = "Thông tin cố vấn",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    HorizontalDivider(thickness = 2.dp)
+
+                    InformationRow(
+                        iconId = R.drawable.desktop_computer,
+                        label = "Khoa",
+                        value = when(profile.department) {
+                                "CNTT" -> "Công nghệ thông tin"
+                                "ATTT" -> "An toàn thông tin"
+                                "DTVT" -> "Điện tử viễn thông"
+                                else -> "Not defined"
+                            }
+                    )
+                }
+
+                HorizontalDivider(thickness = 2.dp)
+
+                Text(
+                    text = "Thông tin liên lạc",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                InformationRow(
+                    iconId = R.drawable.baseline_call_24,
+                    label = "Số điện thoại",
+                    value = profile.phone
+                )
+
+                InformationRow(
+                    iconId = R.drawable.baseline_email_24,
+                    label = "Email",
+                    value = profile.email
                 )
             }
+        }
 
-            // Name
-            Text(
-                text = personInfo.name,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
+        Spacer(modifier = Modifier.weight(1f))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Button(
+                onClick = { /* TODO */ },
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 12.dp, bottom = 16.dp)
-            )
-
-            // Card: Info
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                    .fillMaxWidth(0.6f)
+                    .height(50.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    if (personInfo.role == Role.STUDENT) {
-                        Text(
-                            text = "Thông tin học tập",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        InformationRow(
-                            iconId = R.drawable.baseline_star_24,
-                            label = "Chuyên ngành",
-                            value = personInfo.major
-                        )
-
-                        HorizontalDivider(thickness = 2.dp)
-                    }
-
-                    InformationRow(
-                        iconId = R.drawable.baseline_call_24,
-                        label = "Số điện thoại",
-                        value = personInfo.phone
-                    )
-                    InformationRow(
-                        iconId = R.drawable.baseline_email_24,
-                        label = "Email",
-                        value = personInfo.email
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f)) // Đẩy button xuống đáy màn hình
-
-            // Logout Button
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Button(
-                    onClick = { /* TODO */ },
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(50.dp)
-                ) {
-                    Text(
-                        text = "Đăng xuất",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(4.dp)
-                    )
-                }
+                Text(
+                    text = "Đăng xuất",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(4.dp)
+                )
             }
         }
     }
 }
+
 
 @Composable
 fun InformationRow(
@@ -303,7 +224,7 @@ fun InformationRow(
 @Composable
 fun PreviewInfoStudent() {
     AppAdvisorTheme {
-        InfoScreen(personInfo = PersonInfo())
+
     }
 }
 

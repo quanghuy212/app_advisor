@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,21 +55,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
-import com.example.appadvisor.data.model.enums.Department
-import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
-import java.util.Locale
 
 @Composable
 fun SignUpScreen(
-    modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
 
     val state = viewModel.uiState.collectAsState()
-    
+
     val errors = viewModel.fieldErrors.collectAsState()
 
     var isPasswordVisible by remember {
@@ -81,34 +80,33 @@ fun SignUpScreen(
         mutableStateOf(false)
     }
 
-    // 2 role
-    val roles = Role.entries
-    // 3 department
-    val departments = Department.entries
-
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Title - Reduced size and spacing
+        Text(
+            text = "Sign Up",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
+        // Form fields with reduced spacing
         Column(
-            modifier = modifier.padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = "Sign Up form", fontSize = 50.sp, fontWeight = FontWeight.Bold)
-
-            Spacer(modifier = Modifier.height(36.dp))
-
             // Full name
             OutlinedTextField(
                 value = state.value.name,
                 onValueChange = viewModel::onNameChange,
                 isError = errors.value.containsValue("name"),
-                label = {
-                    Text(text = "Full name")
-                },
+                label = { Text(text = "Full name") },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
@@ -129,14 +127,14 @@ fun SignUpScreen(
                     }
                 },
                 supportingText = {
-                    errors.value["name"]?.let { Text(it, color = Color.Red) }
+                    errors.value["name"]?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
                 },
-                modifier = modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 )
             )
@@ -146,9 +144,7 @@ fun SignUpScreen(
                 value = state.value.email,
                 onValueChange = viewModel::onEmailChange,
                 isError = errors.value.containsValue("email"),
-                label = {
-                    Text(text = "Email")
-                },
+                label = { Text(text = "Email") },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
@@ -166,11 +162,11 @@ fun SignUpScreen(
                     }
                 },
                 supportingText = {
-                    errors.value["email"]?.let { Text(it, color = Color.Red) }
+                    errors.value["email"]?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
                 },
-                modifier = modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
@@ -188,16 +184,16 @@ fun SignUpScreen(
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Phone, contentDescription = null)
                 },
-                modifier = modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Phone,
                     imeAction = ImeAction.Next
                 ),
                 supportingText = {
-                    errors.value["phoneNumber"]?.let { Text(it, color = Color.Red) }
+                    errors.value["phoneNumber"]?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
                 }
             )
 
@@ -211,25 +207,21 @@ fun SignUpScreen(
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Menu, contentDescription = null)
                 },
-                modifier = modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
                 supportingText = {
-                    errors.value["classroom"]?.let { Text(it, color = Color.Red) }
+                    errors.value["classroom"]?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
                 }
             )
 
             // Major
-            Box(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxWidth()
-            ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = state.value.major,
                     onValueChange = {},
@@ -246,7 +238,9 @@ fun SignUpScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     supportingText = {
-                        errors.value["major"]?.let { Text(it, color = Color.Red) }
+                        errors.value["major"]?.let {
+                            Text(it, color = Color.Red, fontSize = 12.sp)
+                        }
                     },
                     shape = MaterialTheme.shapes.medium
                 )
@@ -267,60 +261,13 @@ fun SignUpScreen(
                 }
             }
 
-
             // Password
             OutlinedTextField(
                 value = state.value.password,
                 onValueChange = viewModel::onPasswordChange,
                 isError = errors.value.containsValue("password"),
-                label = {
-                    Text(text = "Password")
-                },
-                placeholder = {
-                    Text(text = "Enter password")
-                },
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_password_24),
-                        contentDescription = null
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
-                        Icon(
-                            painter = painterResource(
-                                id = if (isConfirmPasswordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24
-                            ),
-                            contentDescription = null
-                        )
-                    }
-                },
-                visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                supportingText = {
-                    errors.value["password"]?.let { Text(it, color = Color.Red) }
-                },
-                modifier = modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                )
-            )
-
-            //Confirm password
-            OutlinedTextField(
-                value = state.value.confirmPassword,
-                onValueChange = viewModel::onConfirmPasswordChange,
-                isError = errors.value.containsValue("confirmPassword"),
-                label = {
-                    Text(text = "Confirm Password")
-                },
-                placeholder = {
-                    Text(text = "Re-enter password")
-                },
+                label = { Text(text = "Password") },
+                placeholder = { Text(text = "Enter password") },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
@@ -340,58 +287,106 @@ fun SignUpScreen(
                 },
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 supportingText = {
-                    errors.value["confirmPassword"]?.let { Text(it, color = Color.Red) }
+                    errors.value["password"]?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
                 },
-                modifier = modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                )
+            )
+
+            // Confirm password
+            OutlinedTextField(
+                value = state.value.confirmPassword,
+                onValueChange = viewModel::onConfirmPasswordChange,
+                isError = errors.value.containsValue("confirmPassword"),
+                label = { Text(text = "Confirm Password") },
+                placeholder = { Text(text = "Re-enter password") },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_password_24),
+                        contentDescription = null
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (isConfirmPasswordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24
+                            ),
+                            contentDescription = null
+                        )
+                    }
+                },
+                visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                supportingText = {
+                    errors.value["confirmPassword"]?.let {
+                        Text(it, color = Color.Red, fontSize = 12.sp)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 )
             )
+        }
 
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    // isSuccess : false -> true
-                    viewModel.signUp()
-                },
-                modifier = modifier.fillMaxWidth(0.5f),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(text = "Sign up", fontStyle = FontStyle.Italic, fontSize = 20.sp)
+        // Sign up button
+        Button(
+            onClick = {
+                viewModel.signUp()
+            },
+            modifier = Modifier.fillMaxWidth(0.6f),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = "Sign up",
+                fontStyle = FontStyle.Italic,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+        }
+
+        // Navigate login when isSuccess = true
+        LaunchedEffect(key1 = state.value.isSuccess) {
+            if (state.value.isSuccess) {
+                navController.navigate(AppScreens.Login.route)
+                viewModel.reset()
             }
+        }
 
-            // Navigate login when isSuccess = true
-            LaunchedEffect(key1 = state.value.isSuccess) {
-                if (state.value.isSuccess) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Login navigation link
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Already have an account? ",
+                fontStyle = FontStyle.Normal,
+                fontSize = 14.sp
+            )
+            Text(
+                text = stringResource(id = R.string.move_to_login),
+                fontStyle = FontStyle.Italic,
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 14.sp,
+                modifier = Modifier.clickable {
                     navController.navigate(AppScreens.Login.route)
-                    viewModel.reset()
                 }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Have you had account? ",
-                    fontStyle = FontStyle.Normal
-                )
-                Text(
-                    text = stringResource(id = R.string.move_to_login),
-                    fontStyle = FontStyle.Italic,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        // Navigate to Login Screen
-                        navController.navigate(AppScreens.Login.route)
-                    }
-                )
-            }
+            )
         }
     }
 }
@@ -401,6 +396,6 @@ fun SignUpScreen(
 fun PreviewSignUpScreen() {
     AppAdvisorTheme {
         val navController = rememberNavController()
-        SignUpScreen(modifier = Modifier, navController = navController)
+        SignUpScreen(navController = navController)
     }
 }

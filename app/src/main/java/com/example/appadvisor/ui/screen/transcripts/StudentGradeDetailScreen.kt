@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,59 +17,100 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.appadvisor.data.Student
-import com.example.appadvisor.data.SubjectGrade
-
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.appadvisor.data.model.response.StudentTranscriptResponse
+import com.example.appadvisor.data.model.response.CourseResult
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentGradeDetailScreen(
-    student: Student
+    navController: NavController,
+    viewModel: TranscriptViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getStudentTranscripts()
+    }
+
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Bảng điểm chi tiết") },
+                title = {
+                    Text(
+                        text = "Bảng điểm chi tiết",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Quay lại"
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
+                .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Thông tin sinh viên
-            StudentInfoCard(student)
+            when {
+                uiState.isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                uiState.transcriptResponse != null -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        // Thông tin
+                        StudentInfoCard(uiState.transcriptResponse!!)
 
-            // Bảng điểm
-            GradeTable(student.subjects)
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Bảng
+                        GradeTable(uiState.transcriptResponse!!.courses)
+                    }
+                }
+
+                else -> {
+                    Text(
+                        text = "Không thể tải dữ liệu bảng điểm chi tiết.",
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.Center),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-fun StudentInfoCard(student: Student) {
-
-    val gpa = student.calculateGPA()
-
+fun StudentInfoCard(transcript: StudentTranscriptResponse) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -79,49 +119,54 @@ fun StudentInfoCard(student: Student) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = student.name,
+                text = transcript.name,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            InfoRow(label = "Mã SV: ", value = student.id)
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            InfoRow(label = "Lớp: ", value = student.className)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Điểm trung bình tích lũy: %.2f".format(gpa),
                 fontWeight = FontWeight.Bold,
-                color = getGpaColor(gpa)
+                color = MaterialTheme.colorScheme.onSurface
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            InfoRow(label = "Mã SV:", value = transcript.id.uppercase())
+            Spacer(modifier = Modifier.height(4.dp))
+            InfoRow(label = "GPA:", value = String.format("%.2f", transcript.gpa))
+            Spacer(modifier = Modifier.height(4.dp))
+            InfoRow(label = "Số tín tích lũy:", value = "${transcript.credits}")
         }
     }
 }
 
 @Composable
 fun InfoRow(label: String, value: String) {
-    Row {
-        Text(text = label, fontWeight = FontWeight.Medium)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = value)
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
 @Composable
-fun GradeTable(subjects: List<SubjectGrade>) {
+fun GradeTable(courses: List<CourseResult>) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
                 .fillMaxWidth()
+                .padding(16.dp)
         ) {
             // Header
             Row(
@@ -129,180 +174,115 @@ fun GradeTable(subjects: List<SubjectGrade>) {
                     .fillMaxWidth()
                     .background(
                         color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(4.dp)
+                        shape = RoundedCornerShape(8.dp)
                     )
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 12.dp, horizontal = 8.dp)
             ) {
                 Text(
                     text = "Tên môn học",
                     fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
                     modifier = Modifier.weight(3f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Left,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "Số tín",
                     fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Điểm KTHP",
+                    text = "Điểm số",
                     fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
                     modifier = Modifier.weight(1.5f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = "Điểm chữ",
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    fontSize = 14.sp,
+                    modifier = Modifier.weight(1.5f),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Subject rows
+            // Course rows
             LazyColumn {
-                items(subjects) { subject ->
+                items(courses) { course ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+                            .padding(vertical = 12.dp, horizontal = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = subject.name,
+                            text = course.name,
                             modifier = Modifier.weight(3f),
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = subject.credits.toString(),
+                            text = course.credit.toString(),
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1f)
+                            fontSize = 14.sp,
+                            modifier = Modifier.weight(1f),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "%.1f".format(subject.finalGrade),
+                            text = String.format("%.1f", course.finalScore),
                             textAlign = TextAlign.Center,
-                            color = getGradeColor(subject.finalGrade),
+                            color = getGradeColor(course.finalScore),
                             fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
                             modifier = Modifier.weight(1.5f)
                         )
                         Text(
-                            text = subject.getLetterGrade(),
+                            text = course.letterScore,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold,
-                            color = getGradeColor(subject.finalGrade),
+                            color = getGradeColor(course.finalScore),
+                            fontSize = 14.sp,
                             modifier = Modifier.weight(1f)
                         )
                     }
 
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant
-                    )
+                    if (course != courses.last()) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Thống kê tổng kết
-            val totalCredits = subjects.sumOf { it.credits }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Tổng số tín chỉ:",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = "$totalCredits",
-                    textAlign = TextAlign.End,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
         }
     }
 }
 
-
 // Hàm xác định màu sắc dựa trên điểm
-fun getGradeColor(grade: Float): Color {
+fun getGradeColor(grade: Double): Color {
     return when {
-        grade >= 8.5f -> Color(0xFF4CAF50) // Xanh lá - A, A+
-        grade >= 7.0f -> Color(0xFF2196F3) // Xanh dương - B, B+
-        grade >= 5.5f -> Color(0xFFFFC107) // Vàng - C, C+
-        grade >= 4.0f -> Color(0xFFFF9800) // Cam - D, D+
+        grade >= 8.5 -> Color(0xFF4CAF50) // Xanh lá - A, A+
+        grade >= 7.0 -> Color(0xFF2196F3) // Xanh dương - B, B+
+        grade >= 5.5 -> Color(0xFFFFC107) // Vàng - C, C+
+        grade >= 4.0 -> Color(0xFFFF9800) // Cam - D, D+
         else -> Color(0xFFF44336) // Đỏ - F
     }
 }
 
-fun getGpaColor(gpa: Float): Color {
-    return when {
-        gpa >= 3.8f -> Color(0xFF4CAF50) // Xanh lá - A, A+
-        gpa >= 3.0f -> Color(0xFF2196F3) // Xanh dương - B, B+
-        gpa >= 2.0f -> Color(0xFFFFC107) // Vàng - C, C+
-        gpa >= 1.0f -> Color(0xFFFF9800) // Cam - D, D+
-        else -> Color(0xFFF44336) // Đỏ - F
-    }
-}
-
-// Hàm Preview
+// Preview
 @Preview(showBackground = true)
 @Composable
 fun StudentGradeDetailScreenPreview() {
-    val student = Student(
-        id = "SV001",
-        name = "Nguyễn Văn A",
-        className = "CNTT2023",
-        subjects = listOf(
-            SubjectGrade(
-                name = "Lập trình Android",
-                credits = 3,
-                finalGrade = 8.5f
-            ),
-            SubjectGrade(
-                name = "Cơ sở dữ liệu",
-                credits = 4,
-                finalGrade = 7.8f
-            ),
-            SubjectGrade(
-                name = "Mạng máy tính",
-                credits = 3,
-                finalGrade = 6.5f
-            ),
-            SubjectGrade(
-                name = "Công nghệ phần mềm",
-                credits = 4,
-                finalGrade = 9.2f
-            ),
-            SubjectGrade(
-                name = "Trí tuệ nhân tạo",
-                credits = 3,
-                finalGrade = 8.0f
-            ),
-            SubjectGrade(
-                name = "Phân tích thiết kế hệ thống",
-                credits = 4,
-                finalGrade = 7.5f
-            ),
-            SubjectGrade(
-                name = "Lập trình Web",
-                credits = 3,
-                finalGrade = 8.7f
-            )
-        )
-    )
-
+    val navController = rememberNavController()
     MaterialTheme {
-        StudentGradeDetailScreen(
-            student = student
-        )
+        StudentGradeDetailScreen(navController = navController)
     }
 }

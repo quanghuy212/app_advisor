@@ -121,7 +121,7 @@ fun HomeAdvisorScreen(
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.weight(1f)) // Đẩy IconButton sang phải
+            Spacer(modifier = Modifier.weight(1f))
 
             IconButton(
                 onClick = {
@@ -162,10 +162,9 @@ fun HomeAdvisorScreen(
                                 when (card.title) {
                                     "Calendar" -> {
                                         navController.navigate(AppScreens.Calendar.route)
-                                        //AddTaskBottomSheet(onSave = {}, onDismiss = {})
                                     }
-                                    "Form" -> {
-                                        navController.navigate(AppScreens.Form.route)
+                                    "Student Manage" -> {
+                                        navController.navigate(AppScreens.StudentManage.route)
                                     }
                                     "Tạo lịch hẹn" -> {
                                         navController.navigate(AppScreens.Meeting.route)
