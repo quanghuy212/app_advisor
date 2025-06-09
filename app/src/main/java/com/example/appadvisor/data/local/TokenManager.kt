@@ -15,6 +15,19 @@ class TokenManager(private val context: Context) {
         private val TOKEN_KEY = stringPreferencesKey(name = "jwt_token")
         private val ROLE_KEY = stringPreferencesKey(name = "user_role")
         private val NAME_KEY = stringPreferencesKey(name = "name")
+        private val ID_KEY = stringPreferencesKey(name = "id")
+    }
+
+    suspend fun saveId(id: String) {
+        context.dataStore.edit { prefs ->
+            prefs[ID_KEY] = id
+        }
+    }
+
+    suspend fun getId(): String? {
+        return context.dataStore.data
+            .map { prefs -> prefs[ID_KEY] }
+            .first()
     }
 
     suspend fun saveToken(token: String) {
@@ -67,11 +80,12 @@ class TokenManager(private val context: Context) {
     }
 
     // Lưu cả token và role cùng một lúc
-    suspend fun saveAuthInfo(token: String, role: String, name: String) {
+    suspend fun saveAuthInfo(token: String, role: String, name: String, id: String) {
         context.dataStore.edit { prefs ->
             prefs[TOKEN_KEY] = token
             prefs[ROLE_KEY] = role
             prefs[NAME_KEY] = name
+            prefs[ID_KEY] = id
         }
     }
 
@@ -81,6 +95,7 @@ class TokenManager(private val context: Context) {
             prefs.remove(TOKEN_KEY)
             prefs.remove(ROLE_KEY)
             prefs.remove(NAME_KEY)
+            prefs.remove(ID_KEY)
         }
     }
 

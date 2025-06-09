@@ -37,12 +37,14 @@ class AuthRepository @Inject constructor(
                         tokenManager.saveAuthInfo(
                             token = body.token,
                             role = body.role,
-                            name = body.name
+                            name = body.name,
+                            id = body.id!!
                         )
 
                         Log.d("TOKEN","${tokenManager.getToken()}")
                         Log.d("ROLE","${tokenManager.getRole()}")
                         Log.d("NAME","${tokenManager.getName()}")
+                        Log.d("ID","${tokenManager.getId()}")
                     }
                 }
 
