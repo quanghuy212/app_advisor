@@ -14,7 +14,6 @@ sealed class AppScreens(val route: String) {
         fun withId(id: Long) = "chatDetails/$id"
     }
     data object AddChat: AppScreens(route = "add_chat")
-    data object EditChat: AppScreens(route = "edit_chat")
 
     data object Info: AppScreens(route = "info")
 
