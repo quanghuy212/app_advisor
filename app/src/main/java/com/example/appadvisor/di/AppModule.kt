@@ -10,6 +10,7 @@ import com.example.appadvisor.data.network.ConversationApiService
 import com.example.appadvisor.data.network.DocumentApiService
 import com.example.appadvisor.data.network.InfoApiService
 import com.example.appadvisor.data.network.MeetingApiService
+import com.example.appadvisor.data.network.SearchApiService
 import com.example.appadvisor.data.network.StudentApiService
 import com.example.appadvisor.data.network.TaskApiService
 import com.example.appadvisor.data.network.UserApiService
@@ -20,6 +21,7 @@ import com.example.appadvisor.data.repository.AuthRepository
 import com.example.appadvisor.data.repository.ConversationRepository
 import com.example.appadvisor.data.repository.DocumentRepository
 import com.example.appadvisor.data.repository.InfoRepository
+import com.example.appadvisor.data.repository.SearchRepository
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -100,6 +102,20 @@ object AppModule {
     @Singleton
     fun provideConversationApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): ConversationApiService {
         return retrofitWithAuth.create(ConversationApiService::class.java)
+    }
+
+    // Provides Search ApiService
+    @Provides
+    @Singleton
+    fun provideSearchApiService(@Named("no-auth-retrofit") retrofitWithoutAuth: Retrofit): SearchApiService {
+        return retrofitWithoutAuth.create(SearchApiService::class.java)
+    }
+
+    // Provides Search Repository
+    @Provides
+    @Singleton
+    fun provideSearchRepository(searchApiService: SearchApiService): SearchRepository {
+        return SearchRepository(searchApiService)
     }
 
     // Provides Conversation Repository
