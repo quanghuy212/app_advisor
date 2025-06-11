@@ -2,9 +2,11 @@ package com.example.appadvisor.di
 
 import android.content.Context
 import com.example.appadvisor.data.local.TokenManager
+import com.example.appadvisor.data.local.WebSocketManager
 import com.example.appadvisor.data.model.Document
 import com.example.appadvisor.data.network.AdvisorApiService
 import com.example.appadvisor.data.network.AuthApiService
+import com.example.appadvisor.data.network.ConversationApiService
 import com.example.appadvisor.data.network.DocumentApiService
 import com.example.appadvisor.data.network.InfoApiService
 import com.example.appadvisor.data.network.MeetingApiService
@@ -15,6 +17,7 @@ import com.example.appadvisor.data.repository.AdvisorRepository
 import com.example.appadvisor.data.repository.MeetingRepository
 import com.example.appadvisor.data.repository.StudentRepository
 import com.example.appadvisor.data.repository.AuthRepository
+import com.example.appadvisor.data.repository.ConversationRepository
 import com.example.appadvisor.data.repository.DocumentRepository
 import com.example.appadvisor.data.repository.InfoRepository
 import com.example.appadvisor.data.repository.UserRepository
@@ -92,6 +95,20 @@ object AppModule {
         return retrofitWithoutAuth.create(DocumentApiService::class.java)
     }
 
+    // Provides Conversation ApiService
+    @Provides
+    @Singleton
+    fun provideConversationApiService(@Named("auth-retrofit") retrofitWithAuth: Retrofit): ConversationApiService {
+        return retrofitWithAuth.create(ConversationApiService::class.java)
+    }
+
+    // Provides Conversation Repository
+    @Provides
+    @Singleton
+    fun provideConversationRepository(conversationApiService: ConversationApiService): ConversationRepository {
+        return ConversationRepository(conversationApiService)
+    }
+
     // Provides Document Repository
     @Provides
     @Singleton
@@ -146,6 +163,13 @@ object AppModule {
     @Singleton
     fun provideTokenManager(@ApplicationContext context: Context): TokenManager {
         return TokenManager(context)
+    }
+
+    // Provide WebSocketManager
+    @Singleton
+    @Provides
+    fun provideWebSocketManager(tokenManager: TokenManager): WebSocketManager {
+        return WebSocketManager(tokenManager)
     }
 
     // Provides AuthInterceptor

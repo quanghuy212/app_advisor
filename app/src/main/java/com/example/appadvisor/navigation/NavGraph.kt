@@ -15,6 +15,9 @@ import com.example.appadvisor.ui.screen.appointment.MeetingScreen
 import com.example.appadvisor.ui.screen.barcode.BarcodeGeneratorScreen
 import com.example.appadvisor.ui.screen.calendar.DetailsTaskScreen
 import com.example.appadvisor.ui.screen.calendar.MonthlyCalendarScreen
+import com.example.appadvisor.ui.screen.chat.AddConversationScreen
+import com.example.appadvisor.ui.screen.chat.ChatListScreen
+import com.example.appadvisor.ui.screen.chat.ChatScreen
 import com.example.appadvisor.ui.screen.form.DocumentsScreen
 import com.example.appadvisor.ui.screen.home.HomeScreen
 import com.example.appadvisor.ui.screen.info.InfoScreen
@@ -128,20 +131,36 @@ fun AppNavGraph(
             }
         }
 
+        // Chat
+        composable(AppScreens.Chat.route) {
+            ChatListScreen(navController)
+        }
+
+        // Details Chat
+        composable(
+            route = AppScreens.DetailsChat.route,
+            arguments = listOf(navArgument("conversationId") {type = NavType.LongType})
+        ) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getLong("conversationId")
+            Log.d("NavGraph", "Navigating to Details chat with conversationId = $conversationId")
+
+            conversationId?.let {
+                ChatScreen(conversationId = conversationId, navController = navController)
+            }
+        }
+
+        composable(AppScreens.AddChat.route) {
+            AddConversationScreen(navController)
+        }
+
+
     }
 }
 
 /*
         //composable("search") { SearchingScreen() }
-        composable("chat") { ChatScreen() }
-        // Chua xu li Info Screen
-        //composable("info") { InfoScreen() }
-        composable("barcode") { BarcodeGeneratorScreen(navController = navController) }
 
-        //composable("form") { OnlineForm() }
-        composable("results") { StudentGradeScreen(navController = navController,student = student) }
+
         composable("settings") { SettingsScreen() }
 
-        composable("score_details") { StudentGradeDetailScreen(student) }
-        composable("create_appointment") { CreateAppointmentScreen() }
 */

@@ -56,6 +56,7 @@ fun DetailsMeetingScreen(
 
     val selfParticipantInfo = meeting?.participants?.find { it.studentId == studentId }
     val selfResponse = selfParticipantInfo?.status
+
     Log.d("Details Meeting Screen","Self Participant Info: $selfParticipantInfo")
 
     val role = viewModel.role

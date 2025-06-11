@@ -8,7 +8,14 @@ sealed class AppScreens(val route: String) {
     // Bottom Navigation Screen
     data object Home: AppScreens(route = "home")
     data object Search: AppScreens(route = "search")
+
     data object Chat: AppScreens(route = "chat")
+    data object DetailsChat: AppScreens(route = "chatDetails/{conversationId}") {
+        fun withId(id: Long) = "chatDetails/$id"
+    }
+    data object AddChat: AppScreens(route = "add_chat")
+    data object EditChat: AppScreens(route = "edit_chat")
+
     data object Info: AppScreens(route = "info")
 
     data object Barcode: AppScreens(route = "barcode")

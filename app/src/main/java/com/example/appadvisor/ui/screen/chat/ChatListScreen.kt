@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,48 +21,55 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-data class ChatPreview(
-    val id: String,
-    val name: String,
-    val lastMessage: String,
-    val timestamp: String,
-    val unreadCount: Int = 0,
-    val avatarUrl: String? = null
-)
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.appadvisor.data.model.Conversation
+import com.example.appadvisor.data.model.enums.Role
+import com.example.appadvisor.navigation.AppScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatListScreen(
-    chatPreviews: List<ChatPreview>,
-    onChatSelected: (String) -> Unit,
-    onNewChatClicked: () -> Unit
+    navController: NavController,
+    viewModel: ChatViewModel = hiltViewModel()
 ) {
     var searchQuery by remember { mutableStateOf("") }
+
+    val uiState by viewModel.uiState.collectAsState()
+
+    val role = viewModel.role
+
+    val showEditDialog by viewModel.showEditDialog.collectAsState()
+
+    val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
+
+    LaunchedEffect(true) {
+        viewModel.getListConversation()
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Đoạn Chat") },
-                actions = {
-                    IconButton(onClick = { /* TODO: Implement search */ }) {
-                        Icon(Icons.Default.Search, contentDescription = "Tìm kiếm")
-                    }
-                }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNewChatClicked,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = "Tạo đoạn chat mới",
-                    tint = Color.White
-                )
+            if (role == Role.ADVISOR) {
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate(AppScreens.AddChat.route)
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Tạo đoạn chat mới",
+                        tint = Color.White
+                    )
+                }
             }
         }
     ) { padding ->
@@ -86,106 +96,177 @@ fun ChatListScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(chatPreviews) { chatPreview ->
-                    ChatPreviewItem(
-                        chatPreview = chatPreview,
-                        onClick = { onChatSelected(chatPreview.id) }
+                items(uiState.conversationList) { conversation ->
+                    ConversationItem(
+                        conversation = conversation,
+                        onClick = { navController.navigate(AppScreens.DetailsChat.withId(id = conversation.id)) },
+                        onEdit = {
+                            viewModel.setEditUiState(conversation)
+                            viewModel.openEditDialog()
+                        },
+                        onDelete = {
+                            viewModel.setDeleteConversation(conversation)
+                            viewModel.openDeleteDialog()
+                        },
+                        showActions = role == Role.ADVISOR
                     )
                 }
+            }
+
+            if (showEditDialog) {
+                EditConversationBottomDialog(
+                    onDismissRequest = { viewModel.closeEditDialog() },
+                    onSave = {
+                        viewModel.updateConversation()
+                        viewModel.closeEditDialog()
+                    }
+                )
+            }
+
+            if (showDeleteDialog) {
+                AlertDialog(
+                    onDismissRequest = { viewModel.closeDeleteDialog() },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                viewModel.deleteConversation()
+                                viewModel.closeDeleteDialog()
+                            }) {
+                            Text("Xóa", color = Color.Red)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { viewModel.closeDeleteDialog() }
+                        ) {
+                            Text("Hủy")
+                        }
+                    },
+                    title = { Text("Xác nhận xóa") },
+                    text = { Text("Bạn có chắc muốn xóa trò chuyện này không?") }
+                )
             }
         }
     }
 }
 
 @Composable
-fun ChatPreviewItem(
-    chatPreview: ChatPreview,
-    onClick: () -> Unit
+fun ConversationItem(
+    conversation: Conversation,
+    onClick: () -> Unit,
+    onEdit: (Conversation) -> Unit,
+    onDelete: (Conversation) -> Unit,
+    showActions: Boolean = true
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Avatar
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = chatPreview.name.first().toString(),
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
+    var expanded by remember { mutableStateOf(false) }
 
-        // Thông tin đoạn chat
-        Column(
+    Box {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 12.dp)
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            // Avatar
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = chatPreview.name,
-                    fontWeight = if (chatPreview.unreadCount > 0) FontWeight.Bold else FontWeight.Normal,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Text(
-                    text = chatPreview.timestamp,
-                    fontSize = 12.sp,
-                    color = Color.Gray
+                    text = conversation.name.first().toString(),
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Thông tin đoạn chat
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 12.dp)
             ) {
-                Text(
-                    text = chatPreview.lastMessage,
-                    fontSize = 14.sp,
-                    color = if (chatPreview.unreadCount > 0) Color.Black else Color.Gray,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = conversation.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-                if (chatPreview.unreadCount > 0) {
-                    Box(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = if (chatPreview.unreadCount > 99) "99+" else chatPreview.unreadCount.toString(),
-                            color = Color.White,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                }
+            }
+
+            // Menu icon (chỉ hiển thị nếu showActions = true)
+            if (showActions) {
+                IconButton(
+                    onClick = { expanded = true }
+                ) {
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Dropdown Menu
+        if (showActions) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                offset = DpOffset(x = (-8).dp, y = (-16).dp)
+            ) {
+                if (conversation.isGroup) {
+                    DropdownMenuItem(
+                        text = { Text("Chỉnh sửa") },
+                        onClick = {
+                            expanded = false
+                            onEdit(conversation)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Chỉnh sửa"
+                            )
+                        }
+                    )
+                }
+
+                DropdownMenuItem(
+                    text = { Text("Xóa") },
+                    onClick = {
+                        expanded = false
+                        onDelete(conversation)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Xóa"
                         )
                     }
-                }
+                )
             }
         }
     }
 
-    Divider(
+    HorizontalDivider(
         modifier = Modifier.padding(start = 78.dp),
         color = Color.LightGray.copy(alpha = 0.5f)
     )
@@ -195,40 +276,4 @@ fun ChatPreviewItem(
 @Preview(showBackground = true)
 @Composable
 fun ChatListScreenPreview() {
-    val sampleChats = listOf(
-        ChatPreview(
-            id = "1",
-            name = "Nguyễn Văn A",
-            lastMessage = "Hẹn gặp lại bạn vào ngày mai nhé!",
-            timestamp = "14:30",
-            unreadCount = 2
-        ),
-        ChatPreview(
-            id = "2",
-            name = "Nhóm Dự án ABC",
-            lastMessage = "Trưởng nhóm: Deadline là thứ 6 tuần này",
-            timestamp = "Hôm qua",
-            unreadCount = 0
-        ),
-        ChatPreview(
-            id = "3",
-            name = "Lê Thị B",
-            lastMessage = "Cảm ơn bạn rất nhiều!",
-            timestamp = "Thứ 2",
-            unreadCount = 0
-        ),
-        ChatPreview(
-            id = "4",
-            name = "Phòng Kỹ thuật",
-            lastMessage = "Bạn đã gửi một file: Báo cáo kỹ thuật.pdf",
-            timestamp = "23/03",
-            unreadCount = 5
-        )
-    )
-
-    ChatListScreen(
-        chatPreviews = sampleChats,
-        onChatSelected = { },
-        onNewChatClicked = { }
-    )
 }
