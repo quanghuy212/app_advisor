@@ -13,6 +13,8 @@ sealed class AppScreens(val route: String) {
     data object DetailsChat: AppScreens(route = "chatDetails/{conversationId}") {
         fun withId(id: Long) = "chatDetails/$id"
     }
+    data object AddChat: AppScreens(route = "add_chat")
+    data object EditChat: AppScreens(route = "edit_chat")
 
     data object Info: AppScreens(route = "info")
 

@@ -3,6 +3,7 @@ package com.example.appadvisor.data.local
 import android.annotation.SuppressLint
 import android.util.Log
 import com.example.appadvisor.data.model.request.ChatMessageRequest
+import com.example.appadvisor.data.model.request.EditChatRequest
 import com.example.appadvisor.data.model.response.MessageResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
@@ -45,16 +46,25 @@ class WebSocketManager @Inject constructor(
     }
 
     fun sendMessage(conversationId: Long, messageText: String) {
-        val id = runBlocking { tokenManager.getId().orEmpty() }
         val request = ChatMessageRequest(
             conversationId = conversationId,
             message = messageText,
-            senderId = id
         )
 
         val json = Gson().toJson(request)
         Log.d("StompSend", "Sending JSON: $json")
         stompClient.send("/app/chat.message", json).subscribe()
+    }
+
+    fun editMessage(messageId: Long, messageText: String) {
+        val request = EditChatRequest(
+            messageId = messageId,
+            message = messageText
+        )
+
+        val json = Gson().toJson(request)
+        Log.d("StompSend", "Sending edit JSON: $json")
+        stompClient.send("/app/chat.message.edit",json).subscribe()
     }
 
     fun disconnect() {

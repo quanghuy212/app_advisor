@@ -8,3 +8,7 @@ data class MessageResponse(
     val sendAt: String
 )
 
+data class MessageConversationResponse(
+    val name: String,
+    val messages: List<MessageResponse>
+)

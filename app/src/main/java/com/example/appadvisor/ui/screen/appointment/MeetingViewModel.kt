@@ -38,7 +38,7 @@ class MeetingViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
-    // Giả lập dữ liệu ban đầu, bạn sẽ load từ API sau
+
     private val _uiState = MutableStateFlow(MeetingScreenUiState())
     val uiState: StateFlow<MeetingScreenUiState> = _uiState
 

@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,7 +42,11 @@ fun ChatListScreen(
 
     val role = viewModel.role
 
-    LaunchedEffect(Unit) {
+    val showEditDialog by viewModel.showEditDialog.collectAsState()
+
+    val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
+
+    LaunchedEffect(true) {
         viewModel.getListConversation()
     }
 
@@ -51,7 +59,9 @@ fun ChatListScreen(
         floatingActionButton = {
             if (role == Role.ADVISOR) {
                 FloatingActionButton(
-                    onClick = {},
+                    onClick = {
+                        navController.navigate(AppScreens.AddChat.route)
+                    },
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(
@@ -89,9 +99,52 @@ fun ChatListScreen(
                 items(uiState.conversationList) { conversation ->
                     ConversationItem(
                         conversation = conversation,
-                        onClick = { navController.navigate(AppScreens.DetailsChat.withId(id = conversation.id)) }
+                        onClick = { navController.navigate(AppScreens.DetailsChat.withId(id = conversation.id)) },
+                        onEdit = {
+                            viewModel.setEditUiState(conversation)
+                            viewModel.openEditDialog()
+                        },
+                        onDelete = {
+                            viewModel.setDeleteConversation(conversation)
+                            viewModel.openDeleteDialog()
+                        },
+                        showActions = role == Role.ADVISOR
                     )
                 }
+            }
+
+            if (showEditDialog) {
+                EditConversationBottomDialog(
+                    onDismissRequest = { viewModel.closeEditDialog() },
+                    onSave = {
+                        viewModel.updateConversation()
+                        viewModel.closeEditDialog()
+                    }
+                )
+            }
+
+            if (showDeleteDialog) {
+                AlertDialog(
+                    onDismissRequest = { viewModel.closeDeleteDialog() },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                viewModel.deleteConversation()
+                                viewModel.closeDeleteDialog()
+                            }) {
+                            Text("Xóa", color = Color.Red)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { viewModel.closeDeleteDialog() }
+                        ) {
+                            Text("Hủy")
+                        }
+                    },
+                    title = { Text("Xác nhận xóa") },
+                    text = { Text("Bạn có chắc muốn xóa trò chuyện này không?") }
+                )
             }
         }
     }
@@ -100,87 +153,115 @@ fun ChatListScreen(
 @Composable
 fun ConversationItem(
     conversation: Conversation,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onEdit: (Conversation) -> Unit,
+    onDelete: (Conversation) -> Unit,
+    showActions: Boolean = true
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Avatar
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = conversation.name.first().toString(),
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
+    var expanded by remember { mutableStateOf(false) }
 
-        // Thông tin đoạn chat
-        Column(
+    Box {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 12.dp)
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            // Avatar
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = conversation.name,
-                    //fontWeight = if (conversation.unreadCount > 0) FontWeight.Bold else FontWeight.Normal,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    text = conversation.name.first().toString(),
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
-
-/*                Text(
-                    text = conversation.timestamp,
-                    fontSize = 12.sp,
-                    color = Color.Gray
-                )*/
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Thông tin đoạn chat
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 12.dp)
             ) {
-/*                Text(
-                    text = conversation.lastMessage,
-                    fontSize = 14.sp,
-                    color = if (conversation.unreadCount > 0) Color.Black else Color.Gray,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )*/
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = conversation.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-/*                if (conversation.unreadCount > 0) {
-                    Box(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = if (conversation.unreadCount > 99) "99+" else conversation.unreadCount.toString(),
-                            color = Color.White,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                }
+            }
+
+            // Menu icon (chỉ hiển thị nếu showActions = true)
+            if (showActions) {
+                IconButton(
+                    onClick = { expanded = true }
+                ) {
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Dropdown Menu
+        if (showActions) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                offset = DpOffset(x = (-8).dp, y = (-16).dp)
+            ) {
+                if (conversation.isGroup) {
+                    DropdownMenuItem(
+                        text = { Text("Chỉnh sửa") },
+                        onClick = {
+                            expanded = false
+                            onEdit(conversation)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Chỉnh sửa"
+                            )
+                        }
+                    )
+                }
+
+                DropdownMenuItem(
+                    text = { Text("Xóa") },
+                    onClick = {
+                        expanded = false
+                        onDelete(conversation)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Xóa"
                         )
                     }
-                }*/
+                )
             }
         }
     }

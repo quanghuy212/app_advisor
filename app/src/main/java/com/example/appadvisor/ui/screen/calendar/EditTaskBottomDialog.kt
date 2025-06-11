@@ -46,7 +46,7 @@ fun EditTaskBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Thêm Task",
+                "Chỉnh sửa Task",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,

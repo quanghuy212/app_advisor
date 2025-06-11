@@ -15,6 +15,7 @@ import com.example.appadvisor.ui.screen.appointment.MeetingScreen
 import com.example.appadvisor.ui.screen.barcode.BarcodeGeneratorScreen
 import com.example.appadvisor.ui.screen.calendar.DetailsTaskScreen
 import com.example.appadvisor.ui.screen.calendar.MonthlyCalendarScreen
+import com.example.appadvisor.ui.screen.chat.AddConversationScreen
 import com.example.appadvisor.ui.screen.chat.ChatListScreen
 import com.example.appadvisor.ui.screen.chat.ChatScreen
 import com.example.appadvisor.ui.screen.form.DocumentsScreen
@@ -148,20 +149,18 @@ fun AppNavGraph(
             }
         }
 
+        composable(AppScreens.AddChat.route) {
+            AddConversationScreen(navController)
+        }
+
+
     }
 }
 
 /*
         //composable("search") { SearchingScreen() }
-        composable("chat") { ChatScreen() }
-        // Chua xu li Info Screen
-        //composable("info") { InfoScreen() }
-        composable("barcode") { BarcodeGeneratorScreen(navController = navController) }
 
-        //composable("form") { OnlineForm() }
-        composable("results") { StudentGradeScreen(navController = navController,student = student) }
+
         composable("settings") { SettingsScreen() }
 
-        composable("score_details") { StudentGradeDetailScreen(student) }
-        composable("create_appointment") { CreateAppointmentScreen() }
 */
