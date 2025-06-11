@@ -21,12 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.appadvisor.R
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -43,7 +45,7 @@ fun BarcodeGeneratorScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Barcode Generator", fontSize = 30.sp) },
+                title = { Text(text = stringResource(R.string.title_barcode), fontSize = 30.sp) },
                 navigationIcon = {
                     IconButton(
                         onClick = { navController.popBackStack() }

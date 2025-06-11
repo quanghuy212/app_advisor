@@ -31,9 +31,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.appadvisor.R
 import com.example.appadvisor.data.model.enums.MeetingStatus
 import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.ui.screen.calendar.InfoRow
@@ -71,7 +73,7 @@ fun DetailsMeetingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Chi tiết cuộc hẹn") },
+                title = { Text(stringResource(R.string.detail_appoint)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -119,19 +121,19 @@ fun DetailsMeetingScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                     }
 
-                    InfoRow("Trạng thái", meeting.meetingStatus.name)
+                    InfoRow(stringResource(R.string.status), meeting.meetingStatus.name)
 
                     // Format date
                     // LocalDate.parse().format() -- dd/mm/yyyy
-                    InfoRow("Ngày gặp", LocalDate.parse(meeting.meetingDate).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                    InfoRow(stringResource(R.string.date_start), LocalDate.parse(meeting.meetingDate).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
 
                     // Format time
                     //LocalTime... -- hh:mm
-                    InfoRow("Giờ bắt đầu", LocalTime.parse(meeting.startTime).format(DateTimeFormatter.ofPattern("HH:mm")))
-                    InfoRow("Giờ kết thúc", LocalTime.parse(meeting.endTime).format(DateTimeFormatter.ofPattern("HH:mm")))
+                    InfoRow(stringResource(R.string.time_start), LocalTime.parse(meeting.startTime).format(DateTimeFormatter.ofPattern("HH:mm")))
+                    InfoRow(stringResource(R.string.time_end), LocalTime.parse(meeting.endTime).format(DateTimeFormatter.ofPattern("HH:mm")))
 
                     Text(
-                        text = "Danh sách người tham gia",
+                        text = stringResource(R.string.selected_participants),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
@@ -178,14 +180,14 @@ fun DetailsMeetingScreen(
                         when (selfResponse?.name ?: "PENDING") {
                             "ACCEPTED" -> {
                                 Text(
-                                    text = "Bạn đã chấp nhận tham gia.",
+                                    text = stringResource(R.string.accept_appoint),
                                     color = Color.Green,
                                     modifier = Modifier.padding(vertical = 8.dp)
                                 )
                             }
                             "DECLINED" -> {
                                 Text(
-                                    text = "Bạn đã từ chối tham gia.",
+                                    text = stringResource(R.string.decline_appoint),
                                     color = Color.Red,
                                     modifier = Modifier.padding(vertical = 8.dp)
                                 )
@@ -200,7 +202,7 @@ fun DetailsMeetingScreen(
                                             .weight(1f)
                                             .padding(end = 8.dp)
                                     ) {
-                                        Text("Từ chối", color = Color.White)
+                                        Text(stringResource(R.string.text_decline), color = Color.White)
                                     }
                                     // Accept
                                     Button(
@@ -213,7 +215,7 @@ fun DetailsMeetingScreen(
                                             .weight(1f)
                                             .padding(start = 8.dp)
                                     ) {
-                                        Text("Chấp nhận", color = Color.White)
+                                        Text(stringResource(R.string.text_acpt), color = Color.White)
                                     }
                                 }
                             }
@@ -227,7 +229,7 @@ fun DetailsMeetingScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                             enabled = (meeting.meetingStatus == MeetingStatus.PLANNED)
                         ) {
-                            Text("Xóa", color = Color.White)
+                            Text(stringResource(R.string.delete), color = Color.White)
                         }
                     }
 
@@ -240,7 +242,7 @@ fun DetailsMeetingScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Không tìm thấy cuộc hẹn.", color = Color.Red)
+                Text(stringResource(R.string.not_found_appoint), color = Color.Red)
             }
         }
 

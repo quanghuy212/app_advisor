@@ -7,11 +7,16 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.appadvisor.R
 import com.example.appadvisor.data.model.response.StudentResponseDTO
 import com.example.appadvisor.ui.screen.calendar.DatePickerField
 import com.example.appadvisor.ui.screen.calendar.TimePickerField
@@ -36,7 +41,7 @@ fun AddMeetingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tạo cuộc hẹn") },
+                title = { Text(stringResource(R.string.title_add_appointment)) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBack
@@ -57,14 +62,14 @@ fun AddMeetingScreen(
             OutlinedTextField(
                 value = addUiState.title,
                 onValueChange = viewModel::onTitleChange,
-                label = { Text("Tiêu đề") },
+                label = { Text(stringResource(R.string.title)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = addUiState.description,
                 onValueChange = viewModel::onDescriptionChange,
-                label = { Text("Mô tả") },
+                label = { Text(stringResource(R.string.des)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -75,14 +80,14 @@ fun AddMeetingScreen(
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TimePickerField(
-                    label = "Giờ bắt đầu",
+                    label = stringResource(R.string.time_start),
                     time = addUiState.startTime,
                     onTimeSelected = viewModel::onStartTimeChange,
                     modifier = Modifier.weight(1f)
                 )
 
                 TimePickerField(
-                    label = "Giờ kết thúc",
+                    label = stringResource(R.string.time_end),
                     time = addUiState.endTime,
                     onTimeSelected = viewModel::onEndTimeChange,
                     modifier = Modifier.weight(1f)
@@ -91,13 +96,37 @@ fun AddMeetingScreen(
 
             Text("Người tham gia đã chọn:")
             addUiState.selectedParticipants.forEach {
-                Text("\t\t\t\t\t${it.name} \t-\t ${it.id.uppercase()}")
+                //Text("\t\t\t\t\t${it.name} \t-\t ${it.id.uppercase()}")
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 2.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = it.name,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = it.id.uppercase(),
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
             }
 
             Button(
                 onClick = { viewModel.openSelectStudentsDialog()}
             ) {
-                Text("Thêm")
+                Text(stringResource(R.string.add))
             }
 
             Button(
@@ -108,7 +137,7 @@ fun AddMeetingScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Text("Tạo cuộc hẹn")
+                Text(stringResource(R.string.save_appoint))
             }
         }
 

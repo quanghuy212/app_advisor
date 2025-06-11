@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -137,11 +138,11 @@ fun HomeStudentScreen(
                             .fillMaxWidth()
                             .clickable {
                                 when (card.title) {
-                                    "Calendar" -> navController.navigate(AppScreens.Calendar.route)
-                                    "Form" -> navController.navigate(AppScreens.Form.route)
-                                    "Results" -> navController.navigate(AppScreens.Result.route)
-                                    "Settings" -> navController.navigate(AppScreens.Settings.route)
-                                    "Meeting" -> navController.navigate(AppScreens.Meeting.route)
+                                    R.string.feat_calendar -> navController.navigate(AppScreens.Calendar.route)
+                                    R.string.feat_form -> navController.navigate(AppScreens.Form.route)
+                                    R.string.feat_result -> navController.navigate(AppScreens.Result.route)
+                                    R.string.feat_settings -> navController.navigate(AppScreens.Settings.route)
+                                    R.string.feat_appointment -> navController.navigate(AppScreens.Meeting.route)
                                 }
                             },
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -156,13 +157,13 @@ fun HomeStudentScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = card.iconId) ,
-                                contentDescription = card.title,
+                                contentDescription = stringResource(card.title),
                                 modifier = Modifier.size(36.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = card.title,
+                                text = stringResource(card.title),
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center
                             )

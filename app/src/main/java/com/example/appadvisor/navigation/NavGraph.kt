@@ -23,6 +23,7 @@ import com.example.appadvisor.ui.screen.home.HomeScreen
 import com.example.appadvisor.ui.screen.info.InfoScreen
 import com.example.appadvisor.ui.screen.login.LoginScreen
 import com.example.appadvisor.ui.screen.search.SearchScreen
+import com.example.appadvisor.ui.screen.settings.SettingsScreen
 import com.example.appadvisor.ui.screen.signup.SignUpScreen
 import com.example.appadvisor.ui.screen.student_mng.DetailsStudentManage
 import com.example.appadvisor.ui.screen.student_mng.StudentListScreen
@@ -156,6 +157,10 @@ fun AppNavGraph(
 
         composable(AppScreens.Search.route) {
             SearchScreen(navController)
+        }
+
+        composable(AppScreens.Settings.route) {
+            SettingsScreen(navController)
         }
 
     }

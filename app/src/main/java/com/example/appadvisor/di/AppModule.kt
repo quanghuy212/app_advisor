@@ -1,9 +1,12 @@
 package com.example.appadvisor.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.datastore.preferences.core.Preferences
 import com.example.appadvisor.data.local.TokenManager
 import com.example.appadvisor.data.local.WebSocketManager
-import com.example.appadvisor.data.model.Document
 import com.example.appadvisor.data.network.AdvisorApiService
 import com.example.appadvisor.data.network.AuthApiService
 import com.example.appadvisor.data.network.ConversationApiService
@@ -15,13 +18,13 @@ import com.example.appadvisor.data.network.StudentApiService
 import com.example.appadvisor.data.network.TaskApiService
 import com.example.appadvisor.data.network.UserApiService
 import com.example.appadvisor.data.repository.AdvisorRepository
-import com.example.appadvisor.data.repository.MeetingRepository
-import com.example.appadvisor.data.repository.StudentRepository
 import com.example.appadvisor.data.repository.AuthRepository
 import com.example.appadvisor.data.repository.ConversationRepository
 import com.example.appadvisor.data.repository.DocumentRepository
 import com.example.appadvisor.data.repository.InfoRepository
+import com.example.appadvisor.data.repository.MeetingRepository
 import com.example.appadvisor.data.repository.SearchRepository
+import com.example.appadvisor.data.repository.StudentRepository
 import com.example.appadvisor.data.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -31,7 +34,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.annotation.Signed
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -186,6 +188,15 @@ object AppModule {
     @Provides
     fun provideWebSocketManager(tokenManager: TokenManager): WebSocketManager {
         return WebSocketManager(tokenManager)
+    }
+
+    // Provides Data Store
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("settings") }
+        )
     }
 
     // Provides AuthInterceptor

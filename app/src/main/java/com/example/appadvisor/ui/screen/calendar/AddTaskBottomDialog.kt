@@ -29,11 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.appadvisor.R
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 import java.time.LocalDate
 import java.time.LocalTime
@@ -61,7 +63,7 @@ fun AddTaskBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Thêm Task",
+                stringResource(R.string.add_task),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -73,7 +75,7 @@ fun AddTaskBottomSheet(
             TextField(
                 value = addTaskUiState.title,
                 onValueChange = calendarViewModel::onTitleChange,
-                label = { Text("Tiêu đề") },
+                label = { Text(stringResource(R.string.title)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
                 singleLine = true
@@ -84,7 +86,7 @@ fun AddTaskBottomSheet(
             TextField(
                 value = addTaskUiState.description,
                 onValueChange = calendarViewModel::onDescriptionChange,
-                label = { Text("Mô tả") },
+                label = { Text(stringResource(R.string.des)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium
             )

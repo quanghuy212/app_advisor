@@ -34,10 +34,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.appadvisor.R
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 
@@ -74,7 +76,7 @@ fun DetailsTaskScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Chi tiết công việc") },
+                title = { Text(stringResource(R.string.detail_task)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Quay lại")
@@ -121,10 +123,10 @@ fun DetailsTaskScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                     }
 
-                    InfoRow(label = "Trạng thái", value = task.status.name)
-                    task.startDate?.let { InfoRow("Ngày bắt đầu", it) }
-                    task.startTime?.let { InfoRow("Giờ bắt đầu", it) }
-                    task.endTime?.let { InfoRow("Giờ kết thúc", it) }
+                    InfoRow(label = stringResource(R.string.status), value = task.status.name)
+                    task.startDate?.let { InfoRow(stringResource(R.string.date_start), it) }
+                    task.startTime?.let { InfoRow(stringResource(R.string.time_start), it) }
+                    task.endTime?.let { InfoRow(stringResource(R.string.time_end), it) }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -135,7 +137,7 @@ fun DetailsTaskScreen(
                             .fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                     ) {
-                        Text("Xóa", color = Color.White)
+                        Text(stringResource(R.string.delete), color = Color.White)
                     }
 
                     if (showDeleteConfirmDialog) {
@@ -148,18 +150,18 @@ fun DetailsTaskScreen(
                                         calendarViewModel.closeConfirmDeleteTaskDialog()
                                         onBackClick()
                                     }) {
-                                    Text("Xóa", color = Color.Red)
+                                    Text(stringResource(R.string.delete), color = Color.Red)
                                 }
                             },
                             dismissButton = {
                                 TextButton(
                                     onClick = { calendarViewModel.closeConfirmDeleteTaskDialog() }
                                 ) {
-                                    Text("Hủy")
+                                    Text(stringResource(R.string.no))
                                 }
                             },
-                            title = { Text("Xác nhận xóa") },
-                            text = { Text("Bạn có chắc muốn xóa công việc này không?") }
+                            title = { Text(stringResource(R.string.delete_confirm)) },
+                            text = { Text(stringResource(R.string.text_delete_conf)) }
                         )
                     }
                 }
@@ -186,7 +188,7 @@ fun DetailsTaskScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Không tìm thấy công việc.", color = Color.Red)
+                Text(stringResource(R.string.no_task), color = Color.Red)
             }
         }
     }

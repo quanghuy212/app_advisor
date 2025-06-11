@@ -9,12 +9,20 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = DarkPrimary,
+    secondary = DarkSecondary,
+    tertiary = DarkTertiary,
+    background = Color(0xFF121212), // Nền tối hơn
+    surface = Color(0xFF1E1E1E),    // Bề mặt hơi sáng hơn nền
+    onPrimary = Color.Black,        // Văn bản đen trên màu chính
+    onSecondary = Color.Black,      // Văn bản đen trên màu phụ
+    onTertiary = Color.Black,       // Văn bản đen trên màu thứ cấp
+    onBackground = Color(0xFFFFFFFF), // Văn bản trắng trên nền
+    onSurface = Color(0xFFFFFFFF)     // Văn bản trắng trên bề mặt
 )
 
 private val LightColorScheme = lightColorScheme(

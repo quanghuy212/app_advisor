@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,7 +67,7 @@ fun HomeAdvisorScreen(
 
     val featureCards = advisorFeatureCard.map { card ->
         FeatureCard(
-            title = card.title,
+            title = card.title ,
             iconId = card.iconId,
             description = card.description
         )
@@ -160,16 +161,16 @@ fun HomeAdvisorScreen(
                             .fillMaxWidth()
                             .clickable {
                                 when (card.title) {
-                                    "Calendar" -> {
+                                    R.string.feat_calendar -> {
                                         navController.navigate(AppScreens.Calendar.route)
                                     }
-                                    "Student Manage" -> {
+                                    R.string.feat_student_mng -> {
                                         navController.navigate(AppScreens.StudentManage.route)
                                     }
-                                    "Tạo lịch hẹn" -> {
+                                    R.string.feat_appointment -> {
                                         navController.navigate(AppScreens.Meeting.route)
                                     }
-                                    "Settings" -> {
+                                    R.string.feat_settings -> {
                                         navController.navigate(AppScreens.Settings.route)
                                     }
                                 }
@@ -186,13 +187,13 @@ fun HomeAdvisorScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = card.iconId) ,
-                                contentDescription = card.title,
+                                contentDescription = stringResource(card.title),
                                 modifier = Modifier.size(36.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = card.title,
+                                text = stringResource(card.title),
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center
                             )

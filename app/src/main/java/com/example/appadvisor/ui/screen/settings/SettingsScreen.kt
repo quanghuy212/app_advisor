@@ -1,5 +1,6 @@
 package com.example.appadvisor.ui.screen.settings
 
+import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -7,30 +8,36 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.appadvisor.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
-    var darkMode by remember { mutableStateOf(false) }
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var selectedLanguage by remember { mutableStateOf("Tiếng Việt") }
+fun SettingsScreen(
+    navController: NavController,
+    settingViewModel: SettingViewModel = hiltViewModel()
+) {
+    val darkMode = settingViewModel.darkMode.collectAsState()
+    val currentLang by settingViewModel.languageCode.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Cài đặt") },
+                title = { Text(stringResource(R.string.feat_settings)) },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Quay lại"
@@ -49,7 +56,7 @@ fun SettingsScreen() {
         ) {
             // Giao diện người dùng
             Text(
-                text = "Giao diện người dùng",
+                text = stringResource(R.string.text_ui),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -80,70 +87,15 @@ fun SettingsScreen() {
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = "Chế độ tối",
+                                text = stringResource(R.string.text_darkmode),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
                         Switch(
-                            checked = darkMode,
-                            onCheckedChange = { darkMode = it }
+                            checked = darkMode.value,
+                            onCheckedChange = { settingViewModel.setDarkMode(it) }
                         )
                     }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Thông báo và Bảo mật
-            Text(
-                text = "Thông báo và Bảo mật",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    // Bật thông báo
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column {
-                                Text(
-                                    text = "Thông báo",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                                Text(
-                                    text = "Nhận thông báo khi có cập nhật mới",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                        Switch(
-                            checked = notificationsEnabled,
-                            onCheckedChange = { notificationsEnabled = it }
-                        )
-                    }
-
                 }
             }
 
@@ -151,7 +103,7 @@ fun SettingsScreen() {
 
             // Ngôn ngữ và khu vực
             Text(
-                text = "Ngôn ngữ và khu vực",
+                text = stringResource(R.string.text_lang),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -172,27 +124,37 @@ fun SettingsScreen() {
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
 
-                    val languages = listOf("Tiếng Việt", "English")
+                    val context = LocalContext.current
+                    val activity = context as? Activity
+                    val languages = listOf("vi" to "Tiếng Việt", "en" to "English")
 
-                    languages.forEach { language ->
+                    LaunchedEffect(Unit) {
+                        settingViewModel.needRestart.collect {
+                            activity?.recreate() // 🔁 chỉ gọi lại khi data đã lưu
+                        }
+                    }
+
+                    languages.forEach { (code, displayName) ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp)
                                 .selectable(
-                                    selected = selectedLanguage == language,
-                                    onClick = { selectedLanguage = language },
+                                    selected = currentLang == code,
+                                    onClick = {
+                                        settingViewModel.setLanguage(code)
+                                    },
                                     role = Role.RadioButton
                                 )
                                 .padding(horizontal = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = selectedLanguage == language,
+                                selected = currentLang == code,
                                 onClick = null
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text(text = language)
+                            Text(text = displayName)
                         }
                     }
                 }
@@ -208,7 +170,7 @@ fun SettingsScreen() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Thông tin ứng dụng",
+                        text = stringResource(R.string.text_aboutapp),
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -218,22 +180,13 @@ fun SettingsScreen() {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "Phiên bản")
+                        Text(text = stringResource(R.string.text_version))
                         Text(text = "1.0.0")
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingsScreenPreview() {
-    MaterialTheme {
-        SettingsScreen()
     }
 }

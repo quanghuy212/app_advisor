@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AppAdvisor</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="move_to_signup">Hãy đăng kí!</string>
+    <string name="move_to_login">Hãy đăng nhập!</string>
+    <string name="feat_calendar">Lịch</string>
+    <string name="feat_student_mng">Quản lí SV</string>
+    <string name="feat_appointment">Cuộc hẹn</string>
+    <string name="feat_settings">Cài đặt</string>
+    <string name="feat_result">Kết quả</string>
+    <string name="feat_form">Tham khảo</string>
+    <string name="text_ui">Giao diện người dùng</string>
+    <string name="text_lang">Ngôn ngữ</string>
+    <string name="text_version">Phiên bản</string>
+    <string name="text_darkmode">Chế độ tối</string>
+    <string name="text_aboutapp">Thông tin ứng dụng</string>
+    <string name="title_add_appointment">Tạo cuộc hẹn</string>
+    <string name="title">Tiêu đề</string>
+    <string name="des">Mô tả</string>
+    <string name="time_start">Giờ bắt đầu</string>
+    <string name="time_end">Giờ kết thúc</string>
+    <string name="selected_participants">Người đã chọn</string>
+    <string name="add">Thêm</string>
+    <string name="save_appoint">Tạo cuộc hẹn</string>
+    <string name="detail_appoint">Chi tiết cuộc hẹn</string>
+    <string name="status">Trạng thái</string>
+    <string name="date_start">Ngày gặp</string>
+    <string name="accept_appoint">Bạn chấp nhận cuộc hẹn này</string>
+    <string name="decline_appoint">Bạn từ chối cuộc hẹn này</string>
+    <string name="text_acpt">Chấp nhận</string>
+    <string name="text_decline">Từ chối</string>
+    <string name="delete">Xóa</string>
+    <string name="not_found_appoint">Không tìm thấy cuộc hẹn nào</string>
+    <string name="student_list">Danh sách sinh viên</string>
+    <string name="no">Hủy</string>
+    <string name="yes">Xác nhận</string>
+    <string name="title_barcode">Mã vạch</string>
+    <string name="add_task">Thêm nhiệm vụ</string>
+    <string name="date">Ngày:</string>
+    <string name="detail_task">Chi tiết công việc</string>
+    <string name="delete_confirm">Xác nhận xóa</string>
+    <string name="text_delete_conf">Bạn có chắc chắn muốn xóa công việc này không?</string>
+    <string name="no_task">Không tìm thấy công việc</string>
+</resources>
