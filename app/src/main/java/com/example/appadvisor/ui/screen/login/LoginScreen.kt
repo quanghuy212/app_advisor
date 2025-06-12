@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.appadvisor.R
+import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 /*
@@ -167,6 +168,7 @@ fun LoginScreen(
                     .align(Alignment.End)
                     .clickable {
                         // Process flow forgot pass
+                        navController.navigate(AppScreens.ForgotPassword.route)
                     }
             )
 

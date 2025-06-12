@@ -41,4 +41,5 @@ sealed class AppScreens(val route: String) {
         fun withId(studentId: String) = "score_details/$studentId"
     }
 
+    data object ForgotPassword: AppScreens(route = "forgot-pass")
 }

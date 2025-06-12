@@ -2,8 +2,11 @@ package com.example.appadvisor.data.repository
 
 import android.util.Log
 import com.example.appadvisor.data.local.TokenManager
+import com.example.appadvisor.data.model.request.ForgotPasswordRequest
 import com.example.appadvisor.data.model.request.LoginRequest
+import com.example.appadvisor.data.model.request.ResetPasswordRequest
 import com.example.appadvisor.data.model.request.SignUpRequest
+import com.example.appadvisor.data.model.request.VerifyOtpRequest
 import com.example.appadvisor.data.model.response.LoginResponse
 import com.example.appadvisor.data.model.response.ApiResponse
 import com.example.appadvisor.data.network.AuthApiService
@@ -57,5 +60,44 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    suspend fun sendOtp(email: String): Result<ApiResponse> {
+        return try {
+            val response = authApiService.sendOtp(ForgotPasswordRequest(email))
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception(response.errorBody()?.string()))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun verifyOtp(email: String, otp: String): Result<ApiResponse> {
+        return try {
+            val response = authApiService.verifyOtp(VerifyOtpRequest(email, otp))
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception(response.errorBody()?.string()))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun resetPassword(email: String, otp: String, newPassword: String): Result<ApiResponse> {
+        val request = ResetPasswordRequest(email, otp, newPassword)
+        return try {
+            val response = authApiService.resetPassword(request)
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception(response.errorBody()?.string()))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 }
