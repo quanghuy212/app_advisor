@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.imePadding(),
                     bottomBar = {
                         // If currentRoute is Login Screen or Sign up Screen, BottomNavBar isn't shown
-                        if ( currentRoute !in listOf(AppScreens.Login.route, AppScreens.SignUp.route)) {
+                        if ( currentRoute !in listOf(AppScreens.Login.route, AppScreens.SignUp.route, AppScreens.ForgotPassword.route)) {
                             Box(
                                 Modifier
                                     .navigationBarsPadding()
@@ -89,15 +89,12 @@ class MainActivity : ComponentActivity() {
                                 BottomNavBar(navController)
                             }
                         }
-
                     }
-
                 ) { paddingValues ->
                     Box(modifier = Modifier.padding(paddingValues)) {
                         AppNavGraph(navController)
                     }
                 }
-                //BottomSheetTestScreen()
             }
         }
     }

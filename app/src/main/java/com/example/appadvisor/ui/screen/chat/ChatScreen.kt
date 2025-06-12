@@ -2,6 +2,7 @@
 
 package com.example.appadvisor.ui.screen.chat
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -11,9 +12,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,40 +32,41 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.appadvisor.R
-import com.example.appadvisor.data.model.enums.Role
+import com.makeappssimple.abhimanyu.composeemojipicker.ComposeEmojiPickerBottomSheetUI
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -73,18 +77,18 @@ fun ChatScreen(
     navController: NavController,
     viewModel: ChatDetailViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
-    var messageText by remember { mutableStateOf("") }
 
+    val messageText = uiState.messageDraft
 
-
-
-    val role = viewModel.role
+    val coroutineScope = rememberCoroutineScope()
+    val emojiBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     LaunchedEffect(conversationId) {
         viewModel.init(conversationId)
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,7 +106,7 @@ fun ChatScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = uiState.value.name.firstOrNull()?.toString() ?: "Z",
+                            text = uiState.name.firstOrNull()?.toString() ?: "Z",
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
@@ -111,7 +115,7 @@ fun ChatScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = uiState.value.name,
+                            text = uiState.name,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -131,7 +135,7 @@ fun ChatScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(uiState.value.messages) { message ->
+                items(uiState.messages) { message ->
                     ChatMessageItem(
                         message = message,
                         onEditMessage = { messageId, newContent ->
@@ -155,7 +159,7 @@ fun ChatScreen(
             ) {
                 TextField(
                     value = messageText,
-                    onValueChange = { messageText = it },
+                    onValueChange = { viewModel.onDraftChanged(it) },
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp),
@@ -167,8 +171,16 @@ fun ChatScreen(
                     ),
                     shape = RoundedCornerShape(24.dp),
                     leadingIcon = {
-                        IconButton(onClick = {}) {
-                            Icon(painter = painterResource(R.drawable.baseline_sentiment_very_satisfied_24), contentDescription = null)
+                        IconButton(onClick = {
+                            viewModel.toggleEmojiPicker()
+                            coroutineScope.launch {
+                                emojiBottomSheetState.show()
+                            }
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_sentiment_very_satisfied_24),
+                                contentDescription = null
+                            )
                         }
                     },
                     trailingIcon = {
@@ -181,8 +193,8 @@ fun ChatScreen(
                 IconButton(
                     onClick = {
                         if (messageText.isNotEmpty()) {
-                            viewModel.sendMessage(conversationId, messageText)
-                            messageText = ""
+                            //viewModel.sendMessage(conversationId, messageText)
+                            viewModel.onMessageSent(conversationId)
 
                         }
                     },
@@ -200,7 +212,24 @@ fun ChatScreen(
             }
         }
 
+        AnimatedVisibility(visible = uiState.isEmojiPickerVisible) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                ComposeEmojiPickerBottomSheetUI(
+                    onEmojiClick = { emoji ->
+                        viewModel.onEmojiPicked(emoji.character)
+                    }
+                )
+            }
+        }
     }
+
+
+
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)

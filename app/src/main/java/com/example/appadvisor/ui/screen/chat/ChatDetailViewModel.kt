@@ -29,12 +29,6 @@ class ChatDetailViewModel @Inject constructor(
 
     private var currentUserId: String? = null
 
-    private val _showEditDialog = MutableStateFlow(false)
-    var showEditDialog: StateFlow<Boolean> = _showEditDialog
-
-    private val _showDeleteDialog = MutableStateFlow(false)
-    val showDeleteDialog: StateFlow<Boolean> = _showDeleteDialog
-
     var role by mutableStateOf<Role?>(null)
         private set
 
@@ -47,6 +41,32 @@ class ChatDetailViewModel @Inject constructor(
             role = tokenManager.getRole()?.let { Role.valueOf(it) }
         }
     }
+
+    fun toggleEmojiPicker() {
+        _uiState.update { it.copy(isEmojiPickerVisible = !it.isEmojiPickerVisible) }
+    }
+
+    fun onEmojiPicked(emoji: String) {
+        _uiState.update { it.copy(
+            messageDraft = it.messageDraft + emoji,
+            isEmojiPickerVisible = false
+        ) }
+    }
+
+    fun onDraftChanged(newText: String) {
+        _uiState.update { it.copy(messageDraft = newText) }
+    }
+
+    fun onMessageSent(conversationId: Long) {
+        val text = _uiState.value.messageDraft.trim()
+        if (text.isNotEmpty()) {
+            sendMessage(conversationId, text)
+            _uiState.update { it.copy(messageDraft = "") }
+        }
+    }
+
+
+
 
     fun init(conversationId: Long) {
         viewModelScope.launch {
@@ -120,29 +140,12 @@ class ChatDetailViewModel @Inject constructor(
         }
     }
 
-
     fun sendMessage(conversationId: Long, text: String) {
         webSocketManager.sendMessage(conversationId, text)
     }
 
     fun editMessage(messageId: Long, text: String) {
         webSocketManager.editMessage(messageId,text)
-    }
-
-    fun openEditDialog() {
-        _showEditDialog.value = true
-    }
-
-    fun closeEditDialog() {
-        _showEditDialog.value = false
-    }
-
-    fun openDeleteDialog() {
-        _showDeleteDialog.value = true
-    }
-
-    fun closeDeleteDialog() {
-        _showDeleteDialog.value = false
     }
 
     override fun onCleared() {
