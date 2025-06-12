@@ -48,6 +48,8 @@ fun StudentListScreen(
     viewModel: StudentManageViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val filteredStudents by viewModel.filteredStudents.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.fetchStudents()
@@ -69,7 +71,11 @@ fun StudentListScreen(
             }
 
             uiState.isSuccess -> {
-                StudentTableScreen(students = uiState.students) { student ->
+                StudentTableScreen(
+                    students = filteredStudents,
+                    searchQuery = searchQuery,
+                    onQueryChange = viewModel::updateSearchQuery
+                ) { student ->
                     navController.navigate(AppScreens.ScoreDetailsByAdvisor.withId(studentId = student.id))
                 }
             }
@@ -88,20 +94,16 @@ fun StudentListScreen(
 @Composable
 fun StudentTableScreen(
     students: List<StudentManageResponse>,
+    searchQuery: String,
+    onQueryChange: (String) -> Unit,
     onItemClick: (StudentManageResponse) -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
-
-    val filteredStudents = students.filter {
-        it.name.contains(searchQuery, ignoreCase = true) ||
-                it.id.contains(searchQuery, ignoreCase = true)
-    }
 
     Column(modifier = Modifier.fillMaxSize().padding(4.dp)) {
         OutlinedTextField(
             value = searchQuery,
-            onValueChange = { searchQuery = it },
+            onValueChange = onQueryChange,
             label = { Text("Tìm kiếm sinh viên") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -111,6 +113,7 @@ fun StudentTableScreen(
             shape = MaterialTheme.shapes.large
         )
 
+        // Table headers...
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
@@ -134,7 +137,7 @@ fun StudentTableScreen(
         Divider()
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(filteredStudents) { student ->
+            items(students) { student ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -142,7 +145,7 @@ fun StudentTableScreen(
                         .padding(vertical = 8.dp)
                 ) {
                     Box(modifier = Modifier.width(100.dp).padding(start = 8.dp)) {
-                        Text(text = student.id)
+                        Text(text = student.id.uppercase())
                     }
 
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
@@ -156,6 +159,7 @@ fun StudentTableScreen(
         }
     }
 }
+
 
 
 @Preview(showBackground = true)

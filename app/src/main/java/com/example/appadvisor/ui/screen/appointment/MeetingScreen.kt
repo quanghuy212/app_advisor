@@ -33,10 +33,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun MeetingScreen(
     navController: NavController,
-    meetingViewModel: MeetingViewModel = hiltViewModel(),
-    onNavigateToDetail: (Meeting) -> Unit = {},
-    onNavigateToCreate: () -> Unit = {},
-    onNavigateBack: () -> Unit = {}
+    meetingViewModel: MeetingViewModel = hiltViewModel()
 ) {
     val uiState by meetingViewModel.uiState.collectAsState()
     //val userRole by meetingViewModel.userRole.collectAsState()
@@ -55,7 +52,9 @@ fun MeetingScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.feat_appointment)) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }

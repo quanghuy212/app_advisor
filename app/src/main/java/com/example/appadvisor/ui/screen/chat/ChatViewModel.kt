@@ -46,6 +46,28 @@ class ChatViewModel @Inject constructor(
 
     private val _idEditConversation = mutableStateOf<Long?>(null)
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+        filterConversations()
+    }
+
+    private val _filteredConversationList = MutableStateFlow<List<Conversation>>(emptyList())
+    val filteredConversationList: StateFlow<List<Conversation>> = _filteredConversationList
+
+    private fun filterConversations() {
+        val query = _searchQuery.value.lowercase()
+        val allConversations = _uiState.value.conversationList
+
+        _filteredConversationList.value = if (query.isBlank()) {
+            allConversations
+        } else {
+            allConversations.filter { it.name.contains(query, ignoreCase = true) }
+        }
+    }
+
     fun setDeleteConversation(conversation: Conversation) {
         _conversationToDelete.value = conversation
     }
@@ -259,6 +281,8 @@ class ChatViewModel @Inject constructor(
                     isSuccess = true
                 )
             }
+
+            filterConversations()
         }
     }
 }

@@ -75,8 +75,7 @@ fun AppNavGraph(
         // Meeting
         composable(route = AppScreens.Meeting.route) {
             MeetingScreen(
-                navController = navController,
-                onNavigateToCreate = { navController.navigate(AppScreens.CreateMeeting.route) }
+                navController = navController
             )
         }
         // Add Meeting
@@ -105,7 +104,7 @@ fun AppNavGraph(
 
         // Info
         composable(AppScreens.Info.route) {
-            InfoScreen()
+            InfoScreen(navController)
         }
 
         // Result

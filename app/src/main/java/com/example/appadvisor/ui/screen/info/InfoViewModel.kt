@@ -53,4 +53,12 @@ class InfoViewModel @Inject constructor(
             }
         }
     }
+
+    fun logout(onLoggedOut: () -> Unit) {
+        viewModelScope.launch {
+            tokenManager.clearAuthInfo()
+            onLoggedOut() // Callback về UI để điều hướng
+        }
+    }
+
 }
