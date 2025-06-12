@@ -74,6 +74,8 @@ dependencies {
     implementation("com.kizitonwose.calendar:compose:2.0.4")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
+    implementation("com.github.Abhimanyu14:compose-emoji-picker:1.0.0-alpha16")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
