@@ -18,6 +18,7 @@ import com.example.appadvisor.ui.screen.calendar.MonthlyCalendarScreen
 import com.example.appadvisor.ui.screen.chat.AddConversationScreen
 import com.example.appadvisor.ui.screen.chat.ChatListScreen
 import com.example.appadvisor.ui.screen.chat.ChatScreen
+import com.example.appadvisor.ui.screen.forgotpassword.ForgotPasswordScreen
 import com.example.appadvisor.ui.screen.form.DocumentsScreen
 import com.example.appadvisor.ui.screen.home.HomeScreen
 import com.example.appadvisor.ui.screen.info.InfoScreen
@@ -75,8 +76,7 @@ fun AppNavGraph(
         // Meeting
         composable(route = AppScreens.Meeting.route) {
             MeetingScreen(
-                navController = navController,
-                onNavigateToCreate = { navController.navigate(AppScreens.CreateMeeting.route) }
+                navController = navController
             )
         }
         // Add Meeting
@@ -105,7 +105,7 @@ fun AppNavGraph(
 
         // Info
         composable(AppScreens.Info.route) {
-            InfoScreen()
+            InfoScreen(navController)
         }
 
         // Result
@@ -161,6 +161,10 @@ fun AppNavGraph(
 
         composable(AppScreens.Settings.route) {
             SettingsScreen(navController)
+        }
+
+        composable(AppScreens.ForgotPassword.route) {
+            ForgotPasswordScreen()
         }
 
     }

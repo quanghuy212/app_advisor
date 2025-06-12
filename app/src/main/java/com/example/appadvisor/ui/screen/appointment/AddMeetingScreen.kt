@@ -21,6 +21,7 @@ import com.example.appadvisor.data.model.response.StudentResponseDTO
 import com.example.appadvisor.ui.screen.calendar.DatePickerField
 import com.example.appadvisor.ui.screen.calendar.TimePickerField
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -132,6 +133,7 @@ fun AddMeetingScreen(
             Button(
                 onClick = {
                     viewModel.saveMeetings()
+                    onBack()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

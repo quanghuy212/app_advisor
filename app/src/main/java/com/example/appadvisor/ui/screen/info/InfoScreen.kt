@@ -16,14 +16,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.appadvisor.data.model.enums.Role
 import com.example.appadvisor.data.model.response.ProfileResponse
+import com.example.appadvisor.navigation.AppScreens
 import com.example.appadvisor.ui.theme.AppAdvisorTheme
 
 
 
 @Composable
 fun InfoScreen(
+    navController: NavController,
     viewModel: InfoViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -46,14 +50,26 @@ fun InfoScreen(
             }
 
             uiState.profile != null -> {
-                ProfileContent(profile = uiState.profile!!)
+                ProfileContent(
+                    profile = uiState.profile!!,
+                    onLogOut = {
+                        viewModel.logout {
+                            navController.navigate(AppScreens.Login.route) {
+                                popUpTo(0) { inclusive = true}
+                            }
+                        }
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun ProfileContent(profile: ProfileResponse) {
+fun ProfileContent(
+    profile: ProfileResponse,
+    onLogOut: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -169,7 +185,9 @@ fun ProfileContent(profile: ProfileResponse) {
             contentAlignment = Alignment.Center
         ) {
             Button(
-                onClick = { /* TODO */ },
+                onClick = {
+                    onLogOut()
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
                     .height(50.dp)

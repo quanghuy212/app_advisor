@@ -36,14 +36,12 @@ fun ChatListScreen(
     navController: NavController,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-
     val uiState by viewModel.uiState.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val filteredConversations by viewModel.filteredConversationList.collectAsState()
 
     val role = viewModel.role
-
     val showEditDialog by viewModel.showEditDialog.collectAsState()
-
     val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
 
     LaunchedEffect(true) {
@@ -81,7 +79,7 @@ fun ChatListScreen(
             // Tùy chọn: Thanh tìm kiếm
             OutlinedTextField(
                 value = searchQuery,
-                onValueChange = { searchQuery = it },
+                onValueChange = { viewModel.onSearchQueryChanged(it) },
                 placeholder = { Text("Tìm kiếm đoạn chat...") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,7 +94,7 @@ fun ChatListScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(uiState.conversationList) { conversation ->
+                items(filteredConversations) { conversation ->
                     ConversationItem(
                         conversation = conversation,
                         onClick = { navController.navigate(AppScreens.DetailsChat.withId(id = conversation.id)) },
